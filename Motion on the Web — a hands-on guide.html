@@ -1,285 +1,1056 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Motion on the Web — a hands-on guide to CSS and scroll animation</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-<style>
-  :root {
-    --bg: #fbfbfd;
-    --bg-alt: #f5f5f7;
-    --text: #1d1d1f;
-    --muted: #6e6e73;
-    --line: rgba(0, 0, 0, 0.12);
-    --accent: #0066cc;
-    --accent-fill: #0071e3;
-    --code-bg: #f5f5f7;
-    --warn: #9a5b00;
-    --warn-bg: rgba(255, 159, 10, 0.12);
-    --note-bg: rgba(0, 113, 227, 0.07);
-    --ease: cubic-bezier(0.16, 1, 0.3, 1);
-    box-sizing: border-box;
-    padding-top: env(safe-area-inset-top, 0px);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #000000; --bg-alt: #161617; --text: #f5f5f7; --muted: #a1a1a6;
-      --line: rgba(255,255,255,0.16); --accent: #2997ff; --accent-fill: #0a84ff;
-      --code-bg: #161617; --warn: #ffb340; --warn-bg: rgba(255,179,64,0.12); --note-bg: rgba(41,151,255,0.1);
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: #000000; --bg-alt: #161617; --text: #f5f5f7; --muted: #a1a1a6;
-    --line: rgba(255,255,255,0.16); --accent: #2997ff; --accent-fill: #0a84ff;
-    --code-bg: #161617; --warn: #ffb340; --warn-bg: rgba(255,179,64,0.12); --note-bg: rgba(41,151,255,0.1);
-  }
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>
+      Motion on the Web — a hands-on guide to CSS and scroll animation
+    </title>
+    <link rel="icon" type="image/svg+xml" href="./public/animation.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #fbfbfd;
+        --bg-alt: #f5f5f7;
+        --text: #1d1d1f;
+        --muted: #6e6e73;
+        --line: rgba(0, 0, 0, 0.12);
+        --accent: #0066cc;
+        --accent-fill: #0071e3;
+        --code-bg: #f5f5f7;
+        --warn: #9a5b00;
+        --warn-bg: rgba(255, 159, 10, 0.12);
+        --note-bg: rgba(0, 113, 227, 0.07);
+        --ease: cubic-bezier(0.16, 1, 0.3, 1);
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #000000;
+          --bg-alt: #161617;
+          --text: #f5f5f7;
+          --muted: #a1a1a6;
+          --line: rgba(255, 255, 255, 0.16);
+          --accent: #2997ff;
+          --accent-fill: #0a84ff;
+          --code-bg: #161617;
+          --warn: #ffb340;
+          --warn-bg: rgba(255, 179, 64, 0.12);
+          --note-bg: rgba(41, 151, 255, 0.1);
+        }
+      }
+      :root[data-theme="dark"] {
+        --bg: #000000;
+        --bg-alt: #161617;
+        --text: #f5f5f7;
+        --muted: #a1a1a6;
+        --line: rgba(255, 255, 255, 0.16);
+        --accent: #2997ff;
+        --accent-fill: #0a84ff;
+        --code-bg: #161617;
+        --warn: #ffb340;
+        --warn-bg: rgba(255, 179, 64, 0.12);
+        --note-bg: rgba(41, 151, 255, 0.1);
+      }
 
-  *, *::before, *::after { box-sizing: border-box; }
-  html { scroll-behavior: smooth; scroll-padding-top: calc(24px + env(safe-area-inset-top, 0px)); -webkit-text-size-adjust: 100%; }
-  body {
-    margin: 0; background: var(--bg); color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Helvetica Neue", Arial, sans-serif;
-    font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased; overflow-x: hidden;
-  }
-  h1, h2, h3, p, ul, ol { margin: 0; padding: 0; }
-  a { color: var(--accent); }
-  strong { font-weight: 600; }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: calc(24px + env(safe-area-inset-top, 0px));
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 17px;
+        line-height: 1.65;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter",
+          "Helvetica Neue", Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+      h1,
+      h2,
+      h3,
+      p,
+      ul,
+      ol {
+        margin: 0;
+        padding: 0;
+      }
+      a {
+        color: var(--accent);
+      }
+      strong {
+        font-weight: 600;
+      }
 
-  /* ---------- layout ---------- */
-  .page { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 56px; max-width: 1120px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 40px) 120px; }
-  .toc { position: sticky; top: 24px; align-self: start; max-height: calc(100vh - 48px); overflow: auto; padding-top: 72px; font-size: 14px; }
-  .toc h4 { margin: 0 0 12px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
-  .toc ol { list-style: none; }
-  .toc a { display: block; padding: 6px 0; color: var(--muted); text-decoration: none; transition: color 0.2s ease; }
-  .toc a:hover, .toc a.on { color: var(--text); }
-  .toc-m { display: none; margin: 0 0 40px; border: 1px solid var(--line); border-radius: 14px; padding: 4px 16px; }
-  .toc-m summary { cursor: pointer; padding: 12px 0; font-weight: 600; font-size: 15px; }
-  .toc-m ol { list-style: none; padding-bottom: 12px; }
-  .toc-m a { display: block; padding: 8px 0; color: var(--muted); text-decoration: none; font-size: 15px; }
-  @media (max-width: 960px) {
-    .page { grid-template-columns: minmax(0, 1fr); gap: 0; }
-    .toc { display: none; }
-    .toc-m { display: block; }
-  }
-  main { max-width: 740px; }
+      /* ---------- layout ---------- */
+      .page {
+        display: grid;
+        grid-template-columns: 230px minmax(0, 1fr);
+        gap: 56px;
+        margin: 0 auto;
+        padding: 0 clamp(20px, 5vw, 40px) 120px;
+        max-width: 1120px;
+      }
+      .toc {
+        position: sticky;
+        top: 24px;
+        align-self: start;
+        padding-top: 72px;
+        max-height: calc(100vh - 48px);
+        overflow: auto;
+        font-size: 14px;
+      }
+      .toc h4 {
+        margin: 0 0 12px;
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .toc ol {
+        list-style: none;
+      }
+      .toc a {
+        display: block;
+        transition: color 0.2s ease;
+        padding: 6px 0;
+        color: var(--muted);
+        text-decoration: none;
+      }
+      .toc a:hover,
+      .toc a.on {
+        color: var(--text);
+      }
+      .toc-m {
+        display: none;
+        margin: 0 0 40px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 4px 16px;
+      }
+      .toc-m summary {
+        cursor: pointer;
+        padding: 12px 0;
+        font-weight: 600;
+        font-size: 15px;
+      }
+      .toc-m ol {
+        padding-bottom: 12px;
+        list-style: none;
+      }
+      .toc-m a {
+        display: block;
+        padding: 8px 0;
+        color: var(--muted);
+        font-size: 15px;
+        text-decoration: none;
+      }
+      @media (max-width: 960px) {
+        .page {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 0;
+        }
+        .toc {
+          display: none;
+        }
+        .toc-m {
+          display: block;
+        }
+      }
+      main {
+        max-width: 740px;
+      }
 
-  /* ---------- cover ---------- */
-  .cover { padding: clamp(72px, 14vw, 140px) 0 clamp(40px, 7vw, 72px); }
-  .cover .kicker { font-size: 14px; font-weight: 500; color: var(--muted); }
-  .cover h1 { margin-top: 14px; font-size: clamp(40px, 8vw, 84px); font-weight: 700; letter-spacing: -0.045em; line-height: 1.02; }
-  .cover h1 span { color: var(--muted); }
-  .cover p.sub { margin-top: 24px; font-size: clamp(18px, 2.2vw, 22px); color: var(--muted); line-height: 1.45; max-width: 600px; }
+      /* ---------- cover ---------- */
+      .cover {
+        padding: clamp(72px, 14vw, 140px) 0 clamp(40px, 7vw, 72px);
+      }
+      .cover .kicker {
+        color: var(--muted);
+        font-weight: 500;
+        font-size: 14px;
+      }
+      .cover h1 {
+        margin-top: 14px;
+        font-weight: 700;
+        font-size: clamp(40px, 8vw, 84px);
+        line-height: 1.02;
+        letter-spacing: -0.045em;
+      }
+      .cover h1 span {
+        color: var(--muted);
+      }
+      .cover p.sub {
+        margin-top: 24px;
+        max-width: 600px;
+        color: var(--muted);
+        font-size: clamp(18px, 2.2vw, 22px);
+        line-height: 1.45;
+      }
 
-  /* ---------- chapters ---------- */
-  .chapter { padding-top: clamp(56px, 8vw, 96px); }
-  .chapter .num { font-size: 14px; font-weight: 500; color: var(--muted); }
-  .chapter h2 { margin-top: 8px; font-size: clamp(30px, 4.6vw, 44px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.08; }
-  .chapter h3 { margin-top: 40px; font-size: 21px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.25; }
-  .chapter p { margin-top: 16px; }
-  .chapter ul, .chapter ol.list { margin-top: 14px; padding-left: 22px; }
-  .chapter li { margin-top: 8px; }
-  .lead { font-size: 19px; color: var(--muted); }
+      /* ---------- chapters ---------- */
+      .chapter {
+        padding-top: clamp(56px, 8vw, 96px);
+      }
+      .chapter .num {
+        color: var(--muted);
+        font-weight: 500;
+        font-size: 14px;
+      }
+      .chapter h2 {
+        margin-top: 8px;
+        font-weight: 700;
+        font-size: clamp(30px, 4.6vw, 44px);
+        line-height: 1.08;
+        letter-spacing: -0.035em;
+      }
+      .chapter h3 {
+        margin-top: 40px;
+        font-weight: 600;
+        font-size: 21px;
+        line-height: 1.25;
+        letter-spacing: -0.02em;
+      }
+      .chapter p {
+        margin-top: 16px;
+      }
+      .chapter ul,
+      .chapter ol.list {
+        margin-top: 14px;
+        padding-left: 22px;
+      }
+      .chapter li {
+        margin-top: 8px;
+      }
+      .lead {
+        color: var(--muted);
+        font-size: 19px;
+      }
 
-  code { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.86em; background: var(--code-bg); padding: 0.15em 0.4em; border-radius: 6px; }
-  .codewrap { position: relative; margin-top: 18px; }
-  .codewrap .file { position: absolute; top: 0; left: 0; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 11.5px; color: var(--muted); padding: 10px 16px 0; }
-  pre { margin: 0; background: var(--code-bg); border-radius: 14px; padding: 16px 72px 16px 16px; overflow-x: auto; font-size: 13.5px; line-height: 1.6; -webkit-overflow-scrolling: touch; }
-  .codewrap.has-file pre { padding-top: 36px; }
-  pre code { background: none; padding: 0; font-size: inherit; white-space: pre; }
-  .copy { position: absolute; top: 8px; right: 8px; font: inherit; font-size: 12px; color: var(--muted); background: var(--bg); border: 1px solid var(--line); border-radius: 980px; padding: 4px 12px; cursor: pointer; transition: color 0.2s ease; }
-  .copy:hover { color: var(--text); }
+      code {
+        border-radius: 6px;
+        background: var(--code-bg);
+        padding: 0.15em 0.4em;
+        font-size: 0.86em;
+        font-family:
+          "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      .codewrap {
+        position: relative;
+        margin-top: 18px;
+      }
+      .codewrap .file {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 10px 16px 0;
+        color: var(--muted);
+        font-size: 11.5px;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+      }
+      pre {
+        margin: 0;
+        border-radius: 14px;
+        background: var(--code-bg);
+        padding: 16px 72px 16px 16px;
+        overflow-x: auto;
+        font-size: 13.5px;
+        line-height: 1.6;
+        -webkit-overflow-scrolling: touch;
+      }
+      .codewrap.has-file pre {
+        padding-top: 36px;
+      }
+      pre code {
+        background: none;
+        padding: 0;
+        font-size: inherit;
+        white-space: pre;
+      }
+      .copy {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        transition: color 0.2s ease;
+        cursor: pointer;
+        border: 1px solid var(--line);
+        border-radius: 980px;
+        background: var(--bg);
+        padding: 4px 12px;
+        color: var(--muted);
+        font: inherit;
+        font-size: 12px;
+      }
+      .copy:hover {
+        color: var(--text);
+      }
 
-  .callout { margin-top: 22px; padding: 16px 18px; border-radius: 14px; background: var(--note-bg); font-size: 16px; }
-  .callout b.t { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 4px; }
-  .callout.warn { background: var(--warn-bg); }
-  .callout.warn b.t { color: var(--warn); }
-  .callout p { margin-top: 8px; }
-  .callout p:first-of-type { margin-top: 0; }
-  .where { margin-top: 22px; border-left: 3px solid var(--accent); padding: 4px 0 4px 16px; font-size: 16px; color: var(--muted); }
-  .where b { color: var(--text); font-weight: 600; }
+      .callout {
+        margin-top: 22px;
+        border-radius: 14px;
+        background: var(--note-bg);
+        padding: 16px 18px;
+        font-size: 16px;
+      }
+      .callout b.t {
+        display: block;
+        margin-bottom: 4px;
+        color: var(--accent);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .callout.warn {
+        background: var(--warn-bg);
+      }
+      .callout.warn b.t {
+        color: var(--warn);
+      }
+      .callout p {
+        margin-top: 8px;
+      }
+      .callout p:first-of-type {
+        margin-top: 0;
+      }
+      .where {
+        margin-top: 22px;
+        border-left: 3px solid var(--accent);
+        padding: 4px 0 4px 16px;
+        color: var(--muted);
+        font-size: 16px;
+      }
+      .where b {
+        color: var(--text);
+        font-weight: 600;
+      }
 
-  table { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 15px; }
-  th, td { text-align: left; padding: 11px 12px 11px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
-  th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; }
-  .tablewrap { overflow-x: auto; }
+      table {
+        margin-top: 18px;
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 15px;
+      }
+      th,
+      td {
+        vertical-align: top;
+        border-bottom: 1px solid var(--line);
+        padding: 11px 12px 11px 0;
+        text-align: left;
+      }
+      th {
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 12px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      .tablewrap {
+        overflow-x: auto;
+      }
 
-  /* ---------- demos ---------- */
-  .demo { margin-top: 24px; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
-  .demo-label { padding: 10px 16px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); border-bottom: 1px solid var(--line); background: var(--bg-alt); }
-  .demo-stage { padding: 24px 20px; }
-  .demo-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 12px 16px; border-top: 1px solid var(--line); background: var(--bg-alt); font-size: 14px; }
-  .btn { font: inherit; font-size: 14px; color: #fff; background: var(--accent-fill); border: 0; border-radius: 980px; padding: 8px 18px; cursor: pointer; }
-  .btn:active { transform: scale(0.97); }
-  select, input[type=range] { font: inherit; font-size: 14px; }
-  select { background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
-  input[type=range] { accent-color: var(--accent-fill); }
-  label { display: inline-flex; align-items: center; gap: 8px; }
+      /* ---------- demos ---------- */
+      .demo {
+        margin-top: 24px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        overflow: hidden;
+      }
+      .demo-label {
+        border-bottom: 1px solid var(--line);
+        background: var(--bg-alt);
+        padding: 10px 16px;
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .demo-stage {
+        padding: 24px 20px;
+      }
+      .demo-controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px 16px;
+        border-top: 1px solid var(--line);
+        background: var(--bg-alt);
+        padding: 12px 16px;
+        font-size: 14px;
+      }
+      .btn {
+        cursor: pointer;
+        border: 0;
+        border-radius: 980px;
+        background: var(--accent-fill);
+        padding: 8px 18px;
+        color: #fff;
+        font: inherit;
+        font-size: 14px;
+      }
+      .btn:active {
+        transform: scale(0.97);
+      }
+      select,
+      input[type="range"] {
+        font: inherit;
+        font-size: 14px;
+      }
+      select {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--bg);
+        padding: 6px 8px;
+        color: var(--text);
+      }
+      input[type="range"] {
+        accent-color: var(--accent-fill);
+      }
+      label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
 
-  /* demo: pipeline */
-  .pipe { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-  .pipe div { padding: 14px 10px; border-radius: 12px; background: var(--bg-alt); text-align: center; font-weight: 600; font-size: 14px; }
-  .pipe small { display: block; margin-top: 2px; font-weight: 400; font-size: 12px; color: var(--muted); }
-  .pipe-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; align-items: center; font-size: 13px; }
-  .pipe-row .bar { height: 8px; border-radius: 4px; background: var(--accent-fill); }
-  .pipe-row .lbl { grid-column: 1 / -1; color: var(--muted); }
-  .pipe-row .lbl b { color: var(--text); font-weight: 600; }
-  .s1 .bar { grid-column: 1 / 5; } .s2 .bar { grid-column: 3 / 5; } .s3 .bar { grid-column: 4 / 5; }
-  @media (max-width: 520px) { .pipe div { font-size: 12.5px; padding: 12px 6px; } }
+      /* demo: pipeline */
+      .pipe {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+      }
+      .pipe div {
+        border-radius: 12px;
+        background: var(--bg-alt);
+        padding: 14px 10px;
+        font-weight: 600;
+        font-size: 14px;
+        text-align: center;
+      }
+      .pipe small {
+        display: block;
+        margin-top: 2px;
+        color: var(--muted);
+        font-weight: 400;
+        font-size: 12px;
+      }
+      .pipe-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        align-items: center;
+        gap: 8px;
+        margin-top: 10px;
+        font-size: 13px;
+      }
+      .pipe-row .bar {
+        border-radius: 4px;
+        background: var(--accent-fill);
+        height: 8px;
+      }
+      .pipe-row .lbl {
+        grid-column: 1 / -1;
+        color: var(--muted);
+      }
+      .pipe-row .lbl b {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .s1 .bar {
+        grid-column: 1 / 5;
+      }
+      .s2 .bar {
+        grid-column: 3 / 5;
+      }
+      .s3 .bar {
+        grid-column: 4 / 5;
+      }
+      @media (max-width: 520px) {
+        .pipe div {
+          padding: 12px 6px;
+          font-size: 12.5px;
+        }
+      }
 
-  /* demo: transitions */
-  .x-btn { background: var(--accent-fill); color: #fff; border: 0; font: inherit; padding: 12px 24px; border-radius: 980px; cursor: pointer; transition: transform 0.35s var(--ease), background 0.25s ease; }
-  .x-btn:hover { transform: scale(1.06); }
-  .x-btn:active { transform: scale(0.97); }
-  .x-race { display: grid; gap: 14px; }
-  .x-row { display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 12px; font-size: 13px; }
-  .x-row code { font-size: 11.5px; word-break: break-all; }
-  .x-track { position: relative; height: 22px; border-radius: 11px; background: var(--bg-alt); }
-  .x-dot { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--accent-fill); transform: translateX(0); transition: transform 1.6s var(--tf, ease); }
-  .x-race.go .x-dot { transform: translateX(var(--dist, 200px)); }
-  @media (max-width: 520px) { .x-row { grid-template-columns: 1fr; gap: 4px; } }
+      /* demo: transitions */
+      .x-btn {
+        transition:
+          transform 0.35s var(--ease),
+          background 0.25s ease;
+        cursor: pointer;
+        border: 0;
+        border-radius: 980px;
+        background: var(--accent-fill);
+        padding: 12px 24px;
+        color: #fff;
+        font: inherit;
+      }
+      .x-btn:hover {
+        transform: scale(1.06);
+      }
+      .x-btn:active {
+        transform: scale(0.97);
+      }
+      .x-race {
+        display: grid;
+        gap: 14px;
+      }
+      .x-row {
+        display: grid;
+        grid-template-columns: 150px 1fr;
+        align-items: center;
+        gap: 12px;
+        font-size: 13px;
+      }
+      .x-row code {
+        font-size: 11.5px;
+        word-break: break-all;
+      }
+      .x-track {
+        position: relative;
+        border-radius: 11px;
+        background: var(--bg-alt);
+        height: 22px;
+      }
+      .x-dot {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        transform: translateX(0);
+        transition: transform 1.6s var(--tf, ease);
+        border-radius: 50%;
+        background: var(--accent-fill);
+        width: 16px;
+        height: 16px;
+      }
+      .x-race.go .x-dot {
+        transform: translateX(var(--dist, 200px));
+      }
+      @media (max-width: 520px) {
+        .x-row {
+          grid-template-columns: 1fr;
+          gap: 4px;
+        }
+      }
 
-  /* demo: keyframes mask */
-  .x-mask { font-size: clamp(26px, 6vw, 40px); font-weight: 700; letter-spacing: -0.04em; line-height: 1.05; }
-  .x-line { display: block; overflow: hidden; padding-bottom: 0.1em; margin-bottom: -0.1em; }
-  .x-mask.nomask .x-line { overflow: visible; }
-  .x-mask.outline .x-line { outline: 1px dashed var(--accent); }
-  .x-line-in { display: block; transform: translateY(112%); }
-  .x-line:nth-child(2) .x-line-in { color: var(--muted); }
-  .x-mask.run .x-line-in { animation: x-rise 1.1s var(--ease) forwards; animation-delay: calc(0.1s + var(--i) * 0.13s); }
-  @keyframes x-rise { to { transform: translateY(0); } }
+      /* demo: keyframes mask */
+      .x-mask {
+        font-weight: 700;
+        font-size: clamp(26px, 6vw, 40px);
+        line-height: 1.05;
+        letter-spacing: -0.04em;
+      }
+      .x-line {
+        display: block;
+        margin-bottom: -0.1em;
+        padding-bottom: 0.1em;
+        overflow: hidden;
+      }
+      .x-mask.nomask .x-line {
+        overflow: visible;
+      }
+      .x-mask.outline .x-line {
+        outline: 1px dashed var(--accent);
+      }
+      .x-line-in {
+        display: block;
+        transform: translateY(112%);
+      }
+      .x-line:nth-child(2) .x-line-in {
+        color: var(--muted);
+      }
+      .x-mask.run .x-line-in {
+        animation: x-rise 1.1s var(--ease) forwards;
+        animation-delay: calc(0.1s + var(--i) * 0.13s);
+      }
+      @keyframes x-rise {
+        to {
+          transform: translateY(0);
+        }
+      }
 
-  /* demo: scroll boxes */
-  .x-scroll { height: 300px; overflow-y: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); padding: 0 16px; position: relative; -webkit-overflow-scrolling: touch; }
-  .x-hint { height: 200px; display: grid; place-items: center; color: var(--muted); font-size: 14px; }
-  .x-card { margin: 0 0 18px; padding: 22px; border-radius: 14px; background: var(--bg-alt); font-weight: 600; }
-  .x-r { opacity: 0; transform: translateY(30px); transition: opacity 0.9s var(--ease), transform 0.9s var(--ease); transition-delay: var(--d, 0ms); }
-  .x-r.in { opacity: 1; transform: none; }
-  .x-words { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.3; }
-  .x-words span { opacity: 0.2; }
-  .x-readout { padding: 10px 16px; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; border-top: 1px solid var(--line); background: var(--bg-alt); }
-  .x-readout b { color: var(--text); }
+      /* demo: scroll boxes */
+      .x-scroll {
+        position: relative;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--bg);
+        padding: 0 16px;
+        height: 300px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .x-hint {
+        display: grid;
+        place-items: center;
+        height: 200px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .x-card {
+        margin: 0 0 18px;
+        border-radius: 14px;
+        background: var(--bg-alt);
+        padding: 22px;
+        font-weight: 600;
+      }
+      .x-r {
+        transform: translateY(30px);
+        opacity: 0;
+        transition:
+          opacity 0.9s var(--ease),
+          transform 0.9s var(--ease);
+        transition-delay: var(--d, 0ms);
+      }
+      .x-r.in {
+        transform: none;
+        opacity: 1;
+      }
+      .x-words {
+        font-weight: 600;
+        font-size: 22px;
+        line-height: 1.3;
+        letter-spacing: -0.02em;
+      }
+      .x-words span {
+        opacity: 0.2;
+      }
+      .x-readout {
+        border-top: 1px solid var(--line);
+        background: var(--bg-alt);
+        padding: 10px 16px;
+        color: var(--muted);
+        font-size: 14px;
+        font-variant-numeric: tabular-nums;
+      }
+      .x-readout b {
+        color: var(--text);
+      }
 
-  /* demo: count */
-  .x-count { font-size: clamp(56px, 12vw, 96px); font-weight: 700; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .x-count small { font-size: 0.4em; color: var(--muted); font-weight: 600; margin-left: 0.15em; letter-spacing: -0.01em; }
+      /* demo: count */
+      .x-count {
+        font-weight: 700;
+        font-size: clamp(56px, 12vw, 96px);
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.04em;
+        white-space: nowrap;
+      }
+      .x-count small {
+        margin-left: 0.15em;
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 0.4em;
+        letter-spacing: -0.01em;
+      }
 
-  /* demo: hover patterns */
-  .x-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
-  @media (max-width: 560px) { .x-grid { grid-template-columns: minmax(0, 1fr); } }
-  .x-cap { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
-  .x-dim { display: flex; flex-wrap: wrap; gap: 4px 18px; }
-  .x-dim span { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; transition: opacity 0.3s ease, transform 0.45s var(--ease); cursor: default; }
-  .x-dim:hover span { opacity: 0.32; }
-  .x-dim span:hover { opacity: 1; transform: translateY(-2px); }
-  .x-zoom { border-radius: 16px; overflow: hidden; aspect-ratio: 16 / 10; background: var(--bg-alt); }
-  .x-zoom div { width: 100%; height: 100%; display: grid; place-items: center; color: #fff; font-weight: 600; background: linear-gradient(135deg, #5b6cff, #1f9d8b); transition: transform 1.4s var(--ease); }
-  .x-zoom:hover div { transform: scale(1.06); }
-  .x-ul { display: inline-block; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; color: var(--accent); padding-bottom: 4px; background: linear-gradient(currentColor, currentColor) 0 100% / 0 2px no-repeat; transition: background-size 0.6s var(--ease); text-decoration: none; }
-  .x-ul:hover { background-size: 100% 2px; }
-  .x-more { color: var(--accent); font-size: 17px; text-decoration: none; display: inline-flex; gap: 6px; }
-  .x-more span { display: inline-block; transition: transform 0.35s var(--ease); }
-  .x-more:hover { text-decoration: underline; text-underline-offset: 4px; }
-  .x-more:hover span { transform: translateX(4px); }
+      /* demo: hover patterns */
+      .x-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+      }
+      @media (max-width: 560px) {
+        .x-grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+      .x-cap {
+        margin-bottom: 10px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .x-dim {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 18px;
+      }
+      .x-dim span {
+        transition:
+          opacity 0.3s ease,
+          transform 0.45s var(--ease);
+        cursor: default;
+        font-weight: 600;
+        font-size: 22px;
+        letter-spacing: -0.02em;
+      }
+      .x-dim:hover span {
+        opacity: 0.32;
+      }
+      .x-dim span:hover {
+        transform: translateY(-2px);
+        opacity: 1;
+      }
+      .x-zoom {
+        border-radius: 16px;
+        background: var(--bg-alt);
+        aspect-ratio: 16 / 10;
+        overflow: hidden;
+      }
+      .x-zoom div {
+        display: grid;
+        place-items: center;
+        transition: transform 1.4s var(--ease);
+        background: linear-gradient(135deg, #5b6cff, #1f9d8b);
+        width: 100%;
+        height: 100%;
+        color: #fff;
+        font-weight: 600;
+      }
+      .x-zoom:hover div {
+        transform: scale(1.06);
+      }
+      .x-ul {
+        display: inline-block;
+        transition: background-size 0.6s var(--ease);
+        background: linear-gradient(currentColor, currentColor) 0 100% / 0 2px
+          no-repeat;
+        padding-bottom: 4px;
+        color: var(--accent);
+        font-weight: 600;
+        font-size: 22px;
+        letter-spacing: -0.02em;
+        text-decoration: none;
+      }
+      .x-ul:hover {
+        background-size: 100% 2px;
+      }
+      .x-more {
+        display: inline-flex;
+        gap: 6px;
+        color: var(--accent);
+        font-size: 17px;
+        text-decoration: none;
+      }
+      .x-more span {
+        display: inline-block;
+        transition: transform 0.35s var(--ease);
+      }
+      .x-more:hover {
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+      .x-more:hover span {
+        transform: translateX(4px);
+      }
 
-  /* demo: container query */
-  .x-wrapw { max-width: 100%; border: 1px dashed var(--line); border-radius: 12px; padding: 16px; margin: 0 auto; }
-  .x-cq { container-type: inline-size; }
-  .x-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .x-stat b { display: block; font-size: 34px; letter-spacing: -0.03em; line-height: 1.05; }
-  .x-stat span { font-size: 13px; color: var(--muted); }
-  @container (max-width: 440px) {
-    .x-stats { grid-template-columns: 1fr; gap: 0; }
-    .x-stat { display: flex; align-items: baseline; gap: 18px; padding: 12px 0; border-top: 1px solid var(--line); }
-    .x-stat b { min-width: 70px; }
-  }
+      /* demo: container query */
+      .x-wrapw {
+        margin: 0 auto;
+        border: 1px dashed var(--line);
+        border-radius: 12px;
+        padding: 16px;
+        max-width: 100%;
+      }
+      .x-cq {
+        container-type: inline-size;
+      }
+      .x-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+      .x-stat b {
+        display: block;
+        font-size: 34px;
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+      }
+      .x-stat span {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      @container (max-width: 440px) {
+        .x-stats {
+          grid-template-columns: 1fr;
+          gap: 0;
+        }
+        .x-stat {
+          display: flex;
+          align-items: baseline;
+          gap: 18px;
+          border-top: 1px solid var(--line);
+          padding: 12px 0;
+        }
+        .x-stat b {
+          min-width: 70px;
+        }
+      }
 
-  /* demo: mobile menu */
-  .x-phone { position: relative; width: 260px; max-width: 100%; height: 340px; margin: 0 auto; overflow: hidden; border: 1px solid var(--line); border-radius: 28px; background: var(--bg); }
-  .x-bar { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; height: 48px; padding: 0 8px 0 18px; font-weight: 600; font-size: 15px; }
-  .x-burger { position: relative; width: 44px; height: 44px; border: 0; padding: 0; background: none; color: var(--text); cursor: pointer; }
-  .x-burger i { position: absolute; left: 13px; right: 13px; height: 1.5px; background: currentColor; transition: transform 0.45s var(--ease); }
-  .x-burger i:nth-child(1) { top: 19px; } .x-burger i:nth-child(2) { top: 25px; }
-  .x-phone.open .x-burger i:nth-child(1) { transform: translateY(3px) rotate(45deg); }
-  .x-phone.open .x-burger i:nth-child(2) { transform: translateY(-3px) rotate(-45deg); }
-  .x-menu { position: absolute; inset: 0; padding: 64px 20px 20px; background: var(--bg); opacity: 0; visibility: hidden; transition: opacity 0.45s ease, visibility 0s linear 0.45s; }
-  .x-phone.open .x-menu { opacity: 1; visibility: visible; transition: opacity 0.45s ease; }
-  .x-menu a { display: block; padding: 12px 0; font-size: 26px; font-weight: 600; letter-spacing: -0.03em; color: var(--text); text-decoration: none; border-bottom: 1px solid var(--line); opacity: 0; transform: translateY(14px); transition: opacity 0.6s var(--ease), transform 0.6s var(--ease); }
-  .x-phone.open .x-menu a { opacity: 1; transform: none; transition-delay: calc(var(--i) * 60ms + 80ms); }
+      /* demo: mobile menu */
+      .x-phone {
+        position: relative;
+        margin: 0 auto;
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        background: var(--bg);
+        width: 260px;
+        max-width: 100%;
+        height: 340px;
+        overflow: hidden;
+      }
+      .x-bar {
+        display: flex;
+        position: relative;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 2;
+        padding: 0 8px 0 18px;
+        height: 48px;
+        font-weight: 600;
+        font-size: 15px;
+      }
+      .x-burger {
+        position: relative;
+        cursor: pointer;
+        border: 0;
+        background: none;
+        padding: 0;
+        width: 44px;
+        height: 44px;
+        color: var(--text);
+      }
+      .x-burger i {
+        position: absolute;
+        right: 13px;
+        left: 13px;
+        transition: transform 0.45s var(--ease);
+        background: currentColor;
+        height: 1.5px;
+      }
+      .x-burger i:nth-child(1) {
+        top: 19px;
+      }
+      .x-burger i:nth-child(2) {
+        top: 25px;
+      }
+      .x-phone.open .x-burger i:nth-child(1) {
+        transform: translateY(3px) rotate(45deg);
+      }
+      .x-phone.open .x-burger i:nth-child(2) {
+        transform: translateY(-3px) rotate(-45deg);
+      }
+      .x-menu {
+        position: absolute;
+        visibility: hidden;
+        opacity: 0;
+        transition:
+          opacity 0.45s ease,
+          visibility 0s linear 0.45s;
+        inset: 0;
+        background: var(--bg);
+        padding: 64px 20px 20px;
+      }
+      .x-phone.open .x-menu {
+        visibility: visible;
+        opacity: 1;
+        transition: opacity 0.45s ease;
+      }
+      .x-menu a {
+        display: block;
+        transform: translateY(14px);
+        opacity: 0;
+        transition:
+          opacity 0.6s var(--ease),
+          transform 0.6s var(--ease);
+        border-bottom: 1px solid var(--line);
+        padding: 12px 0;
+        color: var(--text);
+        font-weight: 600;
+        font-size: 26px;
+        letter-spacing: -0.03em;
+        text-decoration: none;
+      }
+      .x-phone.open .x-menu a {
+        transform: none;
+        opacity: 1;
+        transition-delay: calc(var(--i) * 60ms + 80ms);
+      }
 
-  .end { margin-top: 96px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+      .end {
+        margin-top: 96px;
+        border-top: 1px solid var(--line);
+        padding-top: 24px;
+        color: var(--muted);
+        font-size: 14px;
+      }
 
-  @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
-  }
-</style>
-</head>
-<body>
-<div class="page">
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <aside class="toc" aria-label="Contents">
+        <h4>Contents</h4>
+        <ol id="toc"></ol>
+      </aside>
 
-<aside class="toc" aria-label="Contents"><h4>Contents</h4><ol id="toc"></ol></aside>
+      <main>
+        <details class="toc-m">
+          <summary>Contents</summary>
+          <ol id="toc-m"></ol>
+        </details>
 
-<main>
-  <details class="toc-m"><summary>Contents</summary><ol id="toc-m"></ol></details>
+        <header class="cover">
+          <p class="kicker">A hands-on guide</p>
+          <h1>Motion on<br /><span>the web.</span></h1>
+          <p class="sub">
+            How every animation in your portfolio works, why it was built that
+            way, and how to use the same ideas in any app. Everything here has a
+            live demo you can touch.
+          </p>
+        </header>
 
-  <header class="cover">
-    <p class="kicker">A hands-on guide</p>
-    <h1>Motion on<br /><span>the web.</span></h1>
-    <p class="sub">How every animation in your portfolio works, why it was built that way, and how to use the same ideas in any app. Everything here has a live demo you can touch.</p>
-  </header>
+        <section class="chapter" id="how-to-read">
+          <p class="num">Start here</p>
+          <h2>How to use this book</h2>
+          <p class="lead">
+            Each chapter follows the same shape: what the effect is, how it
+            works underneath, where it lives in your portfolio, and a small
+            piece of code you can copy into another project.
+          </p>
+          <p>
+            Two habits will help more than anything else. First,
+            <strong>play with every demo</strong> before reading the code, so
+            you know what you are trying to explain. Second,
+            <strong>change one number at a time</strong> in your own project and
+            watch what happens. Animation is a feel skill. You build it by
+            adjusting a duration from 300ms to 900ms and seeing why one looks
+            cheap and the other looks expensive.
+          </p>
+          <p>
+            The code uses plain CSS and plain JavaScript wherever possible. The
+            React versions are shown where your portfolio uses them, and they
+            are only a thin wrapper around the same ideas.
+          </p>
+          <div class="callout">
+            <b class="t">Your portfolio at a glance</b>
+            <p>
+              Everything you see move in it comes from just six techniques:
+              <strong>transitions</strong> (hover),
+              <strong>keyframes</strong> (the hero),
+              <strong>IntersectionObserver</strong> (fade in on scroll),
+              <strong>scroll math</strong> (parallax and the word-by-word text),
+              <strong>requestAnimationFrame</strong> (the counting numbers), and
+              <strong>a few layout tricks</strong> (the menu, the responsive
+              stats). Chapters 2 to 9 take them one at a time.
+            </p>
+          </div>
+        </section>
 
-  <section class="chapter" id="how-to-read">
-    <p class="num">Start here</p>
-    <h2>How to use this book</h2>
-    <p class="lead">Each chapter follows the same shape: what the effect is, how it works underneath, where it lives in your portfolio, and a small piece of code you can copy into another project.</p>
-    <p>Two habits will help more than anything else. First, <strong>play with every demo</strong> before reading the code, so you know what you are trying to explain. Second, <strong>change one number at a time</strong> in your own project and watch what happens. Animation is a feel skill. You build it by adjusting a duration from 300ms to 900ms and seeing why one looks cheap and the other looks expensive.</p>
-    <p>The code uses plain CSS and plain JavaScript wherever possible. The React versions are shown where your portfolio uses them, and they are only a thin wrapper around the same ideas.</p>
-    <div class="callout"><b class="t">Your portfolio at a glance</b>
-      <p>Everything you see move in it comes from just six techniques: <strong>transitions</strong> (hover), <strong>keyframes</strong> (the hero), <strong>IntersectionObserver</strong> (fade in on scroll), <strong>scroll math</strong> (parallax and the word-by-word text), <strong>requestAnimationFrame</strong> (the counting numbers), and <strong>a few layout tricks</strong> (the menu, the responsive stats). Chapters 2 to 9 take them one at a time.</p>
-    </div>
-  </section>
+        <!-- ===================================================== -->
+        <section class="chapter" id="pipeline">
+          <p class="num">Chapter 1</p>
+          <h2>How the browser draws a frame</h2>
+          <p class="lead">
+            Before any code: the one idea that decides whether an animation
+            feels smooth or janky.
+          </p>
 
-  <!-- ===================================================== -->
-  <section class="chapter" id="pipeline">
-    <p class="num">Chapter 1</p>
-    <h2>How the browser draws a frame</h2>
-    <p class="lead">Before any code: the one idea that decides whether an animation feels smooth or janky.</p>
+          <p>
+            Every time something on screen changes, the browser goes through up
+            to four steps:
+          </p>
+          <div class="demo">
+            <div class="demo-label">The rendering pipeline</div>
+            <div class="demo-stage">
+              <div class="pipe">
+                <div>Style<small>which CSS applies</small></div>
+                <div>Layout<small>sizes and positions</small></div>
+                <div>Paint<small>draw the pixels</small></div>
+                <div>Composite<small>stack the layers</small></div>
+              </div>
+              <div class="pipe-row s1">
+                <span class="bar"></span
+                ><span class="lbl"
+                  ><b>width, height, top, left, margin, font-size</b>: all four
+                  steps, every frame. Expensive.</span
+                >
+              </div>
+              <div class="pipe-row s2">
+                <span class="bar"></span
+                ><span class="lbl"
+                  ><b>color, background, box-shadow</b>: skips layout, but
+                  repaints. Medium.</span
+                >
+              </div>
+              <div class="pipe-row s3">
+                <span class="bar"></span
+                ><span class="lbl"
+                  ><b>transform, opacity</b>: composite only, often on the GPU.
+                  Cheap and smooth.</span
+                >
+              </div>
+            </div>
+          </div>
 
-    <p>Every time something on screen changes, the browser goes through up to four steps:</p>
-    <div class="demo"><div class="demo-label">The rendering pipeline</div>
-      <div class="demo-stage">
-        <div class="pipe">
-          <div>Style<small>which CSS applies</small></div>
-          <div>Layout<small>sizes and positions</small></div>
-          <div>Paint<small>draw the pixels</small></div>
-          <div>Composite<small>stack the layers</small></div>
-        </div>
-        <div class="pipe-row s1"><span class="bar"></span><span class="lbl"><b>width, height, top, left, margin, font-size</b>: all four steps, every frame. Expensive.</span></div>
-        <div class="pipe-row s2"><span class="bar"></span><span class="lbl"><b>color, background, box-shadow</b>: skips layout, but repaints. Medium.</span></div>
-        <div class="pipe-row s3"><span class="bar"></span><span class="lbl"><b>transform, opacity</b>: composite only, often on the GPU. Cheap and smooth.</span></div>
-      </div>
-    </div>
+          <p>
+            When you animate <code>left: 0</code> to <code>left: 200px</code>,
+            the browser has to recalculate the position of the element (and
+            possibly its neighbors), repaint it, then composite, 60 times a
+            second. When you animate <code>transform: translateX(200px)</code>,
+            the element has already been painted. The browser just slides the
+            finished picture around.
+          </p>
 
-    <p>When you animate <code>left: 0</code> to <code>left: 200px</code>, the browser has to recalculate the position of the element (and possibly its neighbors), repaint it, then composite, 60 times a second. When you animate <code>transform: translateX(200px)</code>, the element has already been painted. The browser just slides the finished picture around.</p>
+          <div class="callout">
+            <b class="t">The golden rule</b>
+            <p>
+              Animate <code>transform</code> and <code>opacity</code>. Almost
+              every motion you want can be built from them:
+              <code>translate</code> moves, <code>scale</code> grows,
+              <code>rotate</code> turns, <code>opacity</code> fades.
+            </p>
+          </div>
 
-    <div class="callout"><b class="t">The golden rule</b>
-      <p>Animate <code>transform</code> and <code>opacity</code>. Almost every motion you want can be built from them: <code>translate</code> moves, <code>scale</code> grows, <code>rotate</code> turns, <code>opacity</code> fades.</p>
-    </div>
+          <div class="where">
+            <b>In your portfolio:</b> the hero text slide, the scroll fade-ins,
+            the hover zoom, the hamburger icon and the menu links all use only
+            transform and opacity. The one exception is the underline on your
+            email link, which animates <code>background-size</code>. It is tiny,
+            so it is fine.
+          </div>
+        </section>
 
-    <div class="where"><b>In your portfolio:</b> the hero text slide, the scroll fade-ins, the hover zoom, the hamburger icon and the menu links all use only transform and opacity. The one exception is the underline on your email link, which animates <code>background-size</code>. It is tiny, so it is fine.</div>
-  </section>
+        <!-- ===================================================== -->
+        <section class="chapter" id="tokens">
+          <p class="num">Chapter 2</p>
+          <h2>Design tokens with CSS variables</h2>
+          <p class="lead">
+            One place to define colors, timing and spacing. Change it once, the
+            whole site follows.
+          </p>
 
-  <!-- ===================================================== -->
-  <section class="chapter" id="tokens">
-    <p class="num">Chapter 2</p>
-    <h2>Design tokens with CSS variables</h2>
-    <p class="lead">One place to define colors, timing and spacing. Change it once, the whole site follows.</p>
-
-    <p>A CSS custom property (a "variable") starts with two dashes and is read with <code>var()</code>. Declare them on <code>:root</code> and every element can use them.</p>
-    <div class="codewrap has-file"><span class="file">src/styles/tokens.css</span><pre><code>:root {
+          <p>
+            A CSS custom property (a "variable") starts with two dashes and is
+            read with <code>var()</code>. Declare them on <code>:root</code> and
+            every element can use them.
+          </p>
+          <div class="codewrap has-file">
+            <span class="file">src/styles/tokens.css</span>
+            <pre><code>:root {
   --bg: #fbfbfd;
   --text: #1d1d1f;
   --muted: #6e6e73;
@@ -291,93 +1062,199 @@
   background: var(--bg);
   color: var(--text);
   transition: transform 0.6s var(--ease);
-}</code></pre></div>
+}</code></pre>
+          </div>
 
-    <h3>Dark mode for free</h3>
-    <p>Because every color is a variable, dark mode is just redefining the same names inside a media query. No component CSS changes.</p>
-    <div class="codewrap"><pre><code>@media (prefers-color-scheme: dark) {
+          <h3>Dark mode for free</h3>
+          <p>
+            Because every color is a variable, dark mode is just redefining the
+            same names inside a media query. No component CSS changes.
+          </p>
+          <div class="codewrap">
+            <pre><code>@media (prefers-color-scheme: dark) {
   :root {
     --bg: #000000;
     --text: #f5f5f7;
     --muted: #a1a1a6;
     --accent: #2997ff;
   }
-}</code></pre></div>
+}</code></pre>
+          </div>
 
-    <h3>Variables as inputs to animation</h3>
-    <p>This is the part most people miss: variables can carry <em>per-element</em> values into your CSS. You set a variable inline in JSX or HTML, and the stylesheet does the math.</p>
-    <div class="codewrap"><pre><code>&lt;!-- HTML / JSX: each element gets its own index --&gt;
+          <h3>Variables as inputs to animation</h3>
+          <p>
+            This is the part most people miss: variables can carry
+            <em>per-element</em> values into your CSS. You set a variable inline
+            in JSX or HTML, and the stylesheet does the math.
+          </p>
+          <div class="codewrap">
+            <pre><code>&lt;!-- HTML / JSX: each element gets its own index --&gt;
 &lt;li style="--i: 0"&gt;Work&lt;/li&gt;
 &lt;li style="--i: 1"&gt;About&lt;/li&gt;
 &lt;li style="--i: 2"&gt;Skills&lt;/li&gt;
 
 /* CSS: delay grows with the index (a "stagger") */
-li { transition-delay: calc(var(--i) * 60ms + 80ms); }</code></pre></div>
-    <p>Three elements, one CSS rule, three different delays. You will see this pattern in chapters 4, 5 and 10.</p>
+li { transition-delay: calc(var(--i) * 60ms + 80ms); }</code></pre>
+          </div>
+          <p>
+            Three elements, one CSS rule, three different delays. You will see
+            this pattern in chapters 4, 5 and 10.
+          </p>
 
-    <div class="where"><b>In your portfolio:</b> <code>src/styles/tokens.css</code> holds all colors and the <code>--ease</code> curve. <code>--i</code> (stagger) and <code>--d</code> (delay) are set inline by the Hero, Reveal and Nav components.</div>
-  </section>
+          <div class="where">
+            <b>In your portfolio:</b> <code>src/styles/tokens.css</code> holds
+            all colors and the <code>--ease</code> curve.
+            <code>--i</code> (stagger) and <code>--d</code> (delay) are set
+            inline by the Hero, Reveal and Nav components.
+          </div>
+        </section>
 
-  <!-- ===================================================== -->
-  <section class="chapter" id="transitions">
-    <p class="num">Chapter 3</p>
-    <h2>Transitions: smooth hover and state changes</h2>
-    <p class="lead">A transition says: "when this property changes, don't jump, glide."</p>
+        <!-- ===================================================== -->
+        <section class="chapter" id="transitions">
+          <p class="num">Chapter 3</p>
+          <h2>Transitions: smooth hover and state changes</h2>
+          <p class="lead">
+            A transition says: "when this property changes, don't jump, glide."
+          </p>
 
-    <div class="codewrap"><pre><code>.btn {
+          <div class="codewrap">
+            <pre><code>.btn {
   transform: scale(1);
   transition: transform 0.35s var(--ease);
   /*          property  duration  timing   (delay optional) */
 }
-.btn:hover { transform: scale(1.06); }</code></pre></div>
+.btn:hover { transform: scale(1.06); }</code></pre>
+          </div>
 
-    <p>You declare the transition on the <strong>base</strong> state, not on <code>:hover</code>. That way it also animates on the way back. The browser compares the start and end values and fills in the frames between.</p>
+          <p>
+            You declare the transition on the <strong>base</strong> state, not
+            on <code>:hover</code>. That way it also animates on the way back.
+            The browser compares the start and end values and fills in the
+            frames between.
+          </p>
 
-    <div class="demo"><div class="demo-label">Live demo · hover or tap the button</div>
-      <div class="demo-stage"><button class="x-btn">Hover me</button></div>
-    </div>
+          <div class="demo">
+            <div class="demo-label">Live demo · hover or tap the button</div>
+            <div class="demo-stage">
+              <button class="x-btn">Hover me</button>
+            </div>
+          </div>
 
-    <h3>Duration: how long?</h3>
-    <ul>
-      <li><strong>150 to 250ms</strong>: small feedback like color or a tap press.</li>
-      <li><strong>300 to 500ms</strong>: hover lifts and buttons.</li>
-      <li><strong>600 to 1200ms</strong>: big entrances like your scroll reveals. Larger movement needs more time to feel natural.</li>
-    </ul>
+          <h3>Duration: how long?</h3>
+          <ul>
+            <li>
+              <strong>150 to 250ms</strong>: small feedback like color or a tap
+              press.
+            </li>
+            <li><strong>300 to 500ms</strong>: hover lifts and buttons.</li>
+            <li>
+              <strong>600 to 1200ms</strong>: big entrances like your scroll
+              reveals. Larger movement needs more time to feel natural.
+            </li>
+          </ul>
 
-    <h3>Easing: the part that makes it feel "Apple"</h3>
-    <p>Easing is the <em>shape</em> of the speed over time. <code>linear</code> moves at constant speed, which feels robotic because nothing in the real world does that. <code>cubic-bezier(x1, y1, x2, y2)</code> lets you draw the curve with two control points.</p>
-    <p>The curve in your portfolio, <code>cubic-bezier(0.16, 1, 0.3, 1)</code>, is an "ease-out" with a strong start: it covers most of the distance almost instantly, then spends a long time settling. Press play and compare:</p>
+          <h3>Easing: the part that makes it feel "Apple"</h3>
+          <p>
+            Easing is the <em>shape</em> of the speed over time.
+            <code>linear</code> moves at constant speed, which feels robotic
+            because nothing in the real world does that.
+            <code>cubic-bezier(x1, y1, x2, y2)</code> lets you draw the curve
+            with two control points.
+          </p>
+          <p>
+            The curve in your portfolio,
+            <code>cubic-bezier(0.16, 1, 0.3, 1)</code>, is an "ease-out" with a
+            strong start: it covers most of the distance almost instantly, then
+            spends a long time settling. Press play and compare:
+          </p>
 
-    <div class="demo"><div class="demo-label">Live demo · same distance, same time, different easing</div>
-      <div class="demo-stage">
-        <div class="x-race" id="race">
-          <div class="x-row"><code>linear</code><div class="x-track" style="--tf: linear"><div class="x-dot"></div></div></div>
-          <div class="x-row"><code>ease</code><div class="x-track" style="--tf: ease"><div class="x-dot"></div></div></div>
-          <div class="x-row"><code>ease-in-out</code><div class="x-track" style="--tf: ease-in-out"><div class="x-dot"></div></div></div>
-          <div class="x-row"><code>(0.16, 1, 0.3, 1)</code><div class="x-track" style="--tf: cubic-bezier(0.16, 1, 0.3, 1)"><div class="x-dot"></div></div></div>
-        </div>
-      </div>
-      <div class="demo-controls"><button class="btn" id="raceBtn">Play</button><span>Watch the last one: fast start, long gentle landing.</span></div>
-    </div>
+          <div class="demo">
+            <div class="demo-label">
+              Live demo · same distance, same time, different easing
+            </div>
+            <div class="demo-stage">
+              <div class="x-race" id="race">
+                <div class="x-row">
+                  <code>linear</code>
+                  <div class="x-track" style="--tf: linear">
+                    <div class="x-dot"></div>
+                  </div>
+                </div>
+                <div class="x-row">
+                  <code>ease</code>
+                  <div class="x-track" style="--tf: ease">
+                    <div class="x-dot"></div>
+                  </div>
+                </div>
+                <div class="x-row">
+                  <code>ease-in-out</code>
+                  <div class="x-track" style="--tf: ease-in-out">
+                    <div class="x-dot"></div>
+                  </div>
+                </div>
+                <div class="x-row">
+                  <code>(0.16, 1, 0.3, 1)</code>
+                  <div
+                    class="x-track"
+                    style="--tf: cubic-bezier(0.16, 1, 0.3, 1)"
+                  >
+                    <div class="x-dot"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="demo-controls">
+              <button class="btn" id="raceBtn">Play</button
+              ><span>Watch the last one: fast start, long gentle landing.</span>
+            </div>
+          </div>
 
-    <p>Rule of thumb: things <strong>entering</strong> the screen use ease-out (fast then slow). Things <strong>leaving</strong> use ease-in. Things moving between two places on screen use ease-in-out. When in doubt, use your <code>--ease</code> variable.</p>
+          <p>
+            Rule of thumb: things <strong>entering</strong> the screen use
+            ease-out (fast then slow). Things <strong>leaving</strong> use
+            ease-in. Things moving between two places on screen use ease-in-out.
+            When in doubt, use your <code>--ease</code> variable.
+          </p>
 
-    <div class="callout warn"><b class="t">Pitfalls</b>
-      <p><strong>Avoid <code>transition: all</code></strong>. It animates things you didn't intend (including layout properties) and hides bugs. List the properties you mean.</p>
-      <p><strong>Transitions can't animate <code>display</code></strong>. <code>display: none</code> to <code>block</code> is a jump. Use <code>opacity</code> plus <code>visibility</code> instead (chapter 10 shows exactly how).</p>
-      <p><strong>Hover doesn't exist on phones.</strong> A tap makes <code>:hover</code> stick. Wrap hover effects in <code>@media (hover: hover)</code> so they only run where a real pointer exists.</p>
-    </div>
+          <div class="callout warn">
+            <b class="t">Pitfalls</b>
+            <p>
+              <strong>Avoid <code>transition: all</code></strong
+              >. It animates things you didn't intend (including layout
+              properties) and hides bugs. List the properties you mean.
+            </p>
+            <p>
+              <strong>Transitions can't animate <code>display</code></strong
+              >. <code>display: none</code> to <code>block</code> is a jump. Use
+              <code>opacity</code> plus <code>visibility</code> instead (chapter
+              10 shows exactly how).
+            </p>
+            <p>
+              <strong>Hover doesn't exist on phones.</strong> A tap makes
+              <code>:hover</code> stick. Wrap hover effects in
+              <code>@media (hover: hover)</code> so they only run where a real
+              pointer exists.
+            </p>
+          </div>
 
-    <div class="where"><b>In your portfolio:</b> buttons (<code>Button.css</code>), the arrow nudge (<code>ArrowLink.css</code>), tags, nav links and the screenshot zoom (<code>Media.css</code>) are all transitions.</div>
-  </section>
+          <div class="where">
+            <b>In your portfolio:</b> buttons (<code>Button.css</code>), the
+            arrow nudge (<code>ArrowLink.css</code>), tags, nav links and the
+            screenshot zoom (<code>Media.css</code>) are all transitions.
+          </div>
+        </section>
 
-  <!-- ===================================================== -->
-  <section class="chapter" id="keyframes">
-    <p class="num">Chapter 4</p>
-    <h2>Keyframes: animations that run on their own</h2>
-    <p class="lead">Transitions need a trigger (hover, a class change). Keyframes just run, which makes them right for page load.</p>
+        <!-- ===================================================== -->
+        <section class="chapter" id="keyframes">
+          <p class="num">Chapter 4</p>
+          <h2>Keyframes: animations that run on their own</h2>
+          <p class="lead">
+            Transitions need a trigger (hover, a class change). Keyframes just
+            run, which makes them right for page load.
+          </p>
 
-    <div class="codewrap"><pre><code>@keyframes rise {
+          <div class="codewrap">
+            <pre><code>@keyframes rise {
   from { transform: translateY(100%); }
   to   { transform: translateY(0); }
 }
@@ -385,38 +1262,84 @@ li { transition-delay: calc(var(--i) * 60ms + 80ms); }</code></pre></div>
 .title {
   animation: rise 1.1s var(--ease) 0.2s forwards;
   /*         name  duration timing  delay  fill-mode */
-}</code></pre></div>
+}</code></pre>
+          </div>
 
-    <p>The shorthand is <code>animation: name duration timing-function delay iteration-count direction fill-mode</code>. The one that trips everyone up is <strong>fill-mode</strong>:</p>
-    <ul>
-      <li><code>forwards</code>: after the animation ends, keep the final keyframe. Without it, the element snaps back to its starting style.</li>
-      <li><code>backwards</code>: during the delay, apply the first keyframe. Without it, the element shows its normal style until the delay finishes, then jumps.</li>
-      <li><code>both</code>: does both.</li>
-    </ul>
+          <p>
+            The shorthand is
+            <code
+              >animation: name duration timing-function delay iteration-count
+              direction fill-mode</code
+            >. The one that trips everyone up is <strong>fill-mode</strong>:
+          </p>
+          <ul>
+            <li>
+              <code>forwards</code>: after the animation ends, keep the final
+              keyframe. Without it, the element snaps back to its starting
+              style.
+            </li>
+            <li>
+              <code>backwards</code>: during the delay, apply the first
+              keyframe. Without it, the element shows its normal style until the
+              delay finishes, then jumps.
+            </li>
+            <li><code>both</code>: does both.</li>
+          </ul>
 
-    <h3>The text "mask" reveal from your hero</h3>
-    <p>The headline doesn't fade in. Each line slides up from behind an invisible edge. The trick has two layers:</p>
-    <ol class="list">
-      <li>An outer <code>.line</code> with <code>overflow: hidden</code>. This is the mask. Anything outside its box is invisible.</li>
-      <li>An inner <code>.line-in</code> pushed down with <code>translateY(112%)</code>, so it starts fully below the mask, then animated to <code>0</code>.</li>
-    </ol>
-    <p>The text appears to rise out of nothing. Toggle <strong>overflow: hidden</strong> off to see what's really happening:</p>
+          <h3>The text "mask" reveal from your hero</h3>
+          <p>
+            The headline doesn't fade in. Each line slides up from behind an
+            invisible edge. The trick has two layers:
+          </p>
+          <ol class="list">
+            <li>
+              An outer <code>.line</code> with <code>overflow: hidden</code>.
+              This is the mask. Anything outside its box is invisible.
+            </li>
+            <li>
+              An inner <code>.line-in</code> pushed down with
+              <code>translateY(112%)</code>, so it starts fully below the mask,
+              then animated to <code>0</code>.
+            </li>
+          </ol>
+          <p>
+            The text appears to rise out of nothing. Toggle
+            <strong>overflow: hidden</strong> off to see what's really
+            happening:
+          </p>
 
-    <div class="demo"><div class="demo-label">Live demo · the hero headline effect</div>
-      <div class="demo-stage">
-        <div class="x-mask run" id="mask">
-          <span class="x-line"><span class="x-line-in" style="--i: 0">I build web apps,</span></span>
-          <span class="x-line"><span class="x-line-in" style="--i: 1">front to back.</span></span>
-        </div>
-      </div>
-      <div class="demo-controls">
-        <button class="btn" id="maskReplay">Replay</button>
-        <label><input type="checkbox" id="maskClip" checked /> overflow: hidden</label>
-        <label><input type="checkbox" id="maskOutline" /> show the mask edge</label>
-      </div>
-    </div>
+          <div class="demo">
+            <div class="demo-label">Live demo · the hero headline effect</div>
+            <div class="demo-stage">
+              <div class="x-mask run" id="mask">
+                <span class="x-line"
+                  ><span class="x-line-in" style="--i: 0"
+                    >I build web apps,</span
+                  ></span
+                >
+                <span class="x-line"
+                  ><span class="x-line-in" style="--i: 1"
+                    >front to back.</span
+                  ></span
+                >
+              </div>
+            </div>
+            <div class="demo-controls">
+              <button class="btn" id="maskReplay">Replay</button>
+              <label
+                ><input type="checkbox" id="maskClip" checked /> overflow:
+                hidden</label
+              >
+              <label
+                ><input type="checkbox" id="maskOutline" /> show the mask
+                edge</label
+              >
+            </div>
+          </div>
 
-    <div class="codewrap has-file"><span class="file">Hero.css</span><pre><code>.line { display: block; overflow: hidden; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+          <div class="codewrap has-file">
+            <span class="file">Hero.css</span>
+            <pre><code>.line { display: block; overflow: hidden; padding-bottom: 0.1em; margin-bottom: -0.1em; }
 
 .line-in {
   display: block;
@@ -425,34 +1348,67 @@ li { transition-delay: calc(var(--i) * 60ms + 80ms); }</code></pre></div>
   animation-delay: calc(0.18s + var(--i) * 0.13s);   /* stagger */
 }
 
-@keyframes hero-rise { to { transform: translateY(0); } }</code></pre></div>
+@keyframes hero-rise { to { transform: translateY(0); } }</code></pre>
+          </div>
 
-    <div class="callout"><b class="t">Details worth knowing</b>
-      <p><strong>Only a <code>to</code> keyframe?</strong> That's allowed. The missing <code>from</code> uses the element's current style, which here is the translateY(112%) already set in the CSS.</p>
-      <p><strong>Why the padding and negative margin?</strong> <code>overflow: hidden</code> clips to the line box, which cuts off the tails of letters like g and y. <code>padding-bottom: 0.1em</code> gives them room, and <code>margin-bottom: -0.1em</code> cancels the extra space so the lines still sit tight.</p>
-      <p><strong>Stagger:</strong> the inline <code>--i</code> variable (0, 1) feeds <code>calc()</code> in the delay, so the second line starts 0.13s after the first.</p>
-    </div>
+          <div class="callout">
+            <b class="t">Details worth knowing</b>
+            <p>
+              <strong>Only a <code>to</code> keyframe?</strong> That's allowed.
+              The missing <code>from</code> uses the element's current style,
+              which here is the translateY(112%) already set in the CSS.
+            </p>
+            <p>
+              <strong>Why the padding and negative margin?</strong>
+              <code>overflow: hidden</code> clips to the line box, which cuts
+              off the tails of letters like g and y.
+              <code>padding-bottom: 0.1em</code> gives them room, and
+              <code>margin-bottom: -0.1em</code> cancels the extra space so the
+              lines still sit tight.
+            </p>
+            <p>
+              <strong>Stagger:</strong> the inline <code>--i</code> variable (0,
+              1) feeds <code>calc()</code> in the delay, so the second line
+              starts 0.13s after the first.
+            </p>
+          </div>
 
-    <div class="where"><b>In your portfolio:</b> <code>Hero.css</code> (headline, subtitle and buttons fade in with growing delays). The same fade is used on the eyebrow text.</div>
-  </section>
+          <div class="where">
+            <b>In your portfolio:</b> <code>Hero.css</code> (headline, subtitle
+            and buttons fade in with growing delays). The same fade is used on
+            the eyebrow text.
+          </div>
+        </section>
 
-  <!-- ===================================================== -->
-  <section class="chapter" id="reveal">
-    <p class="num">Chapter 5</p>
-    <h2>Scroll reveal with IntersectionObserver</h2>
-    <p class="lead">Elements fade up as they enter the screen. This is the single most-used scroll effect on the web.</p>
+        <!-- ===================================================== -->
+        <section class="chapter" id="reveal">
+          <p class="num">Chapter 5</p>
+          <h2>Scroll reveal with IntersectionObserver</h2>
+          <p class="lead">
+            Elements fade up as they enter the screen. This is the single
+            most-used scroll effect on the web.
+          </p>
 
-    <p>You need two things: <strong>CSS</strong> that defines the hidden and visible states, and <strong>JavaScript</strong> that notices when an element enters the viewport and flips a class.</p>
+          <p>
+            You need two things: <strong>CSS</strong> that defines the hidden
+            and visible states, and <strong>JavaScript</strong> that notices
+            when an element enters the viewport and flips a class.
+          </p>
 
-    <div class="codewrap has-file"><span class="file">CSS</span><pre><code>.reveal {
+          <div class="codewrap has-file">
+            <span class="file">CSS</span>
+            <pre><code>.reveal {
   opacity: 0;
   transform: translateY(30px);
   transition: opacity 1s var(--ease), transform 1s var(--ease);
   transition-delay: var(--d, 0ms);
 }
-.reveal.in { opacity: 1; transform: none; }</code></pre></div>
+.reveal.in { opacity: 1; transform: none; }</code></pre>
+          </div>
 
-    <div class="codewrap has-file"><span class="file">JavaScript (vanilla)</span><pre><code>const io = new IntersectionObserver((entries) =&gt; {
+          <div class="codewrap has-file">
+            <span class="file">JavaScript (vanilla)</span>
+            <pre><code>const io = new IntersectionObserver((entries) =&gt; {
   entries.forEach((entry) =&gt; {
     if (entry.isIntersecting) {
       entry.target.classList.add('in');
@@ -461,36 +1417,65 @@ li { transition-delay: calc(var(--i) * 60ms + 80ms); }</code></pre></div>
   });
 }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
 
-document.querySelectorAll('.reveal').forEach((el) =&gt; io.observe(el));</code></pre></div>
+document.querySelectorAll('.reveal').forEach((el) =&gt; io.observe(el));</code></pre>
+          </div>
 
-    <h3>Why not just listen to the scroll event?</h3>
-    <p>A scroll listener fires dozens of times per second and you'd have to measure every element each time, which is slow. <code>IntersectionObserver</code> lets the browser do the watching and call you only when visibility <em>changes</em>. It is faster and much less code.</p>
+          <h3>Why not just listen to the scroll event?</h3>
+          <p>
+            A scroll listener fires dozens of times per second and you'd have to
+            measure every element each time, which is slow.
+            <code>IntersectionObserver</code> lets the browser do the watching
+            and call you only when visibility <em>changes</em>. It is faster and
+            much less code.
+          </p>
 
-    <h3>The two options</h3>
-    <ul>
-      <li><code>threshold: 0.12</code>: fire when 12% of the element is visible (0 = any pixel, 1 = all of it).</li>
-      <li><code>rootMargin: '0px 0px -6% 0px'</code>: shrinks the watched area from the bottom, so elements trigger slightly <em>after</em> they enter instead of the instant their top edge appears. It makes the reveal visible, not wasted just under the fold.</li>
-    </ul>
+          <h3>The two options</h3>
+          <ul>
+            <li>
+              <code>threshold: 0.12</code>: fire when 12% of the element is
+              visible (0 = any pixel, 1 = all of it).
+            </li>
+            <li>
+              <code>rootMargin: '0px 0px -6% 0px'</code>: shrinks the watched
+              area from the bottom, so elements trigger slightly
+              <em>after</em> they enter instead of the instant their top edge
+              appears. It makes the reveal visible, not wasted just under the
+              fold.
+            </li>
+          </ul>
 
-    <div class="demo"><div class="demo-label">Live demo · scroll inside the box</div>
-      <div class="demo-stage" style="padding:16px">
-        <div class="x-scroll" id="revealBox">
-          <div class="x-hint">Scroll down ↓</div>
-          <div class="x-card x-r">Card one</div>
-          <div class="x-card x-r" style="--d: 100ms">Card two (delay 100ms)</div>
-          <div class="x-card x-r" style="--d: 200ms">Card three (delay 200ms)</div>
-          <div style="height:160px"></div>
-          <div class="x-card x-r">Card four</div>
-          <div class="x-card x-r" style="--d: 100ms">Card five</div>
-          <div style="height:60px"></div>
-        </div>
-      </div>
-      <div class="demo-controls"><button class="btn" id="revealReset">Reset</button><span>Each card has its own <code>--d</code> delay.</span></div>
-    </div>
+          <div class="demo">
+            <div class="demo-label">Live demo · scroll inside the box</div>
+            <div class="demo-stage" style="padding: 16px">
+              <div class="x-scroll" id="revealBox">
+                <div class="x-hint">Scroll down ↓</div>
+                <div class="x-card x-r">Card one</div>
+                <div class="x-card x-r" style="--d: 100ms">
+                  Card two (delay 100ms)
+                </div>
+                <div class="x-card x-r" style="--d: 200ms">
+                  Card three (delay 200ms)
+                </div>
+                <div style="height: 160px"></div>
+                <div class="x-card x-r">Card four</div>
+                <div class="x-card x-r" style="--d: 100ms">Card five</div>
+                <div style="height: 60px"></div>
+              </div>
+            </div>
+            <div class="demo-controls">
+              <button class="btn" id="revealReset">Reset</button
+              ><span>Each card has its own <code>--d</code> delay.</span>
+            </div>
+          </div>
 
-    <h3>The React version</h3>
-    <p>React doesn't change the idea, it just wraps it so you can reuse it. A hook holds the observer, a component applies the class:</p>
-    <div class="codewrap has-file"><span class="file">hooks/useInView.js</span><pre><code>import { useEffect, useRef, useState } from 'react';
+          <h3>The React version</h3>
+          <p>
+            React doesn't change the idea, it just wraps it so you can reuse it.
+            A hook holds the observer, a component applies the class:
+          </p>
+          <div class="codewrap has-file">
+            <span class="file">hooks/useInView.js</span>
+            <pre><code>import { useEffect, useRef, useState } from 'react';
 
 export default function useInView() {
   const ref = useRef(null);
@@ -507,8 +1492,11 @@ export default function useInView() {
   }, []);
 
   return [ref, seen];
-}</code></pre></div>
-    <div class="codewrap has-file"><span class="file">components/ui/Reveal.jsx</span><pre><code>export default function Reveal({ as: Tag = 'div', delay = 0, className = '', children }) {
+}</code></pre>
+          </div>
+          <div class="codewrap has-file">
+            <span class="file">components/ui/Reveal.jsx</span>
+            <pre><code>export default function Reveal({ as: Tag = 'div', delay = 0, className = '', children }) {
   const [ref, seen] = useInView();
   return (
     &lt;Tag ref={ref} className={`reveal ${seen ? 'in' : ''} ${className}`}
@@ -518,37 +1506,76 @@ export default function useInView() {
   );
 }
 
-// usage: &lt;Reveal delay={100}&gt;&lt;h2&gt;Hello&lt;/h2&gt;&lt;/Reveal&gt;</code></pre></div>
+// usage: &lt;Reveal delay={100}&gt;&lt;h2&gt;Hello&lt;/h2&gt;&lt;/Reveal&gt;</code></pre>
+          </div>
 
-    <div class="callout warn"><b class="t">Pitfall: hidden forever</b>
-      <p>If the JavaScript fails to load, <code>.reveal</code> elements stay at <code>opacity: 0</code> and the page looks empty. For client projects, add a <code>js</code> class to <code>&lt;html&gt;</code> from a tiny inline script and write the rule as <code>.js .reveal { opacity: 0; ... }</code>, so content is visible without JavaScript.</p>
-    </div>
+          <div class="callout warn">
+            <b class="t">Pitfall: hidden forever</b>
+            <p>
+              If the JavaScript fails to load, <code>.reveal</code> elements
+              stay at <code>opacity: 0</code> and the page looks empty. For
+              client projects, add a <code>js</code> class to
+              <code>&lt;html&gt;</code> from a tiny inline script and write the
+              rule as <code>.js .reveal { opacity: 0; ... }</code>, so content
+              is visible without JavaScript.
+            </p>
+          </div>
 
-    <div class="where"><b>In your portfolio:</b> <code>hooks/useInView.js</code> and <code>components/ui/Reveal.jsx</code>. It wraps almost every block on the page.</div>
-  </section>
+          <div class="where">
+            <b>In your portfolio:</b> <code>hooks/useInView.js</code> and
+            <code>components/ui/Reveal.jsx</code>. It wraps almost every block
+            on the page.
+          </div>
+        </section>
 
-  <!-- ===================================================== -->
-  <section class="chapter" id="scroll-linked">
-    <p class="num">Chapter 6</p>
-    <h2>Scroll-linked animation: effects tied to scroll position</h2>
-    <p class="lead">The reveal in chapter 5 plays once. These effects are <em>scrubbed</em>: scroll a little, they move a little. Scroll back, they reverse.</p>
+        <!-- ===================================================== -->
+        <section class="chapter" id="scroll-linked">
+          <p class="num">Chapter 6</p>
+          <h2>Scroll-linked animation: effects tied to scroll position</h2>
+          <p class="lead">
+            The reveal in chapter 5 plays once. These effects are
+            <em>scrubbed</em>: scroll a little, they move a little. Scroll back,
+            they reverse.
+          </p>
 
-    <p>Your portfolio has two: the hero fading and drifting as you leave it, and the statement paragraph where words brighten one by one. They share one recipe:</p>
-    <ol class="list">
-      <li>Read where the element is relative to the screen.</li>
-      <li>Convert that to a <strong>progress number from 0 to 1</strong>.</li>
-      <li>Use the progress to set a style (opacity, transform).</li>
-    </ol>
+          <p>
+            Your portfolio has two: the hero fading and drifting as you leave
+            it, and the statement paragraph where words brighten one by one.
+            They share one recipe:
+          </p>
+          <ol class="list">
+            <li>Read where the element is relative to the screen.</li>
+            <li>
+              Convert that to a <strong>progress number from 0 to 1</strong>.
+            </li>
+            <li>Use the progress to set a style (opacity, transform).</li>
+          </ol>
 
-    <h3>The one formula to memorize</h3>
-    <div class="codewrap"><pre><code>progress = clamp( (value - start) / (end - start), 0, 1 )
+          <h3>The one formula to memorize</h3>
+          <div class="codewrap">
+            <pre><code>progress = clamp( (value - start) / (end - start), 0, 1 )
 
-const clamp = (n, min, max) =&gt; Math.min(max, Math.max(min, n));</code></pre></div>
-    <p>It maps any range onto 0 to 1. If <code>value</code> is at <code>start</code>, progress is 0. If it's at <code>end</code>, it's 1. The clamp stops it going outside that range. With a progress value you can drive anything: <code>opacity = 1 - progress</code>, <code>translateY = progress * 100</code>, and so on.</p>
+const clamp = (n, min, max) =&gt; Math.min(max, Math.max(min, n));</code></pre>
+          </div>
+          <p>
+            It maps any range onto 0 to 1. If <code>value</code> is at
+            <code>start</code>, progress is 0. If it's at <code>end</code>, it's
+            1. The clamp stops it going outside that range. With a progress
+            value you can drive anything: <code>opacity = 1 - progress</code>,
+            <code>translateY = progress * 100</code>, and so on.
+          </p>
 
-    <h3>Throttle with requestAnimationFrame</h3>
-    <p>Scroll events can fire more often than the screen refreshes. Doing work on each one is wasteful. <code>requestAnimationFrame</code> says "run this just before the next paint", and canceling the previous request means you do the work at most once per frame:</p>
-    <div class="codewrap has-file"><span class="file">hooks/useScrollFrame.js</span><pre><code>useEffect(() =&gt; {
+          <h3>Throttle with requestAnimationFrame</h3>
+          <p>
+            Scroll events can fire more often than the screen refreshes. Doing
+            work on each one is wasteful.
+            <code>requestAnimationFrame</code> says "run this just before the
+            next paint", and canceling the previous request means you do the
+            work at most once per frame:
+          </p>
+          <div class="codewrap has-file">
+            <span class="file">hooks/useScrollFrame.js</span>
+            <pre><code>useEffect(() =&gt; {
   let raf = 0;
   const run = () =&gt; {
     cancelAnimationFrame(raf);
@@ -560,45 +1587,82 @@ const clamp = (n, min, max) =&gt; Math.min(max, Math.max(min, n));</code></pre><
     cancelAnimationFrame(raf);
     window.removeEventListener('scroll', run);
   };
-}, []);</code></pre></div>
-    <p><code>{ passive: true }</code> promises the browser you won't call <code>preventDefault()</code>, so it can keep scrolling smooth without waiting for your code.</p>
+}, []);</code></pre>
+          </div>
+          <p>
+            <code>{ passive: true }</code> promises the browser you won't call
+            <code>preventDefault()</code>, so it can keep scrolling smooth
+            without waiting for your code.
+          </p>
 
-    <h3>Example 1: the hero drift</h3>
-    <div class="codewrap"><pre><code>const y = Math.min(window.scrollY, window.innerHeight);
+          <h3>Example 1: the hero drift</h3>
+          <div class="codewrap">
+            <pre><code>const y = Math.min(window.scrollY, window.innerHeight);
 const p = y / window.innerHeight;                  // 0 at top, 1 after one screen
 
 el.style.transform = `translate3d(0, ${y * 0.18}px, 0) scale(${1 - p * 0.05})`;
-el.style.opacity   = String(Math.max(0, 1 - p * 1.2));</code></pre></div>
-    <p>The text moves down at 18% of the scroll speed (so it seems to lag behind), shrinks by 5% and fades out. That's a "parallax" effect: layers moving at different speeds create depth.</p>
+el.style.opacity   = String(Math.max(0, 1 - p * 1.2));</code></pre>
+          </div>
+          <p>
+            The text moves down at 18% of the scroll speed (so it seems to lag
+            behind), shrinks by 5% and fades out. That's a "parallax" effect:
+            layers moving at different speeds create depth.
+          </p>
 
-    <h3>Example 2: words that light up</h3>
-    <p>Each word gets an opacity of <code>0.2 + 0.8 * t</code>, where <code>t</code> is how far the scroll progress has passed that word:</p>
-    <div class="codewrap"><pre><code>const progress = clamp((vh * 0.85 - rect.top) / (vh * 0.5 + rect.height), 0, 1);
+          <h3>Example 2: words that light up</h3>
+          <p>
+            Each word gets an opacity of <code>0.2 + 0.8 * t</code>, where
+            <code>t</code> is how far the scroll progress has passed that word:
+          </p>
+          <div class="codewrap">
+            <pre><code>const progress = clamp((vh * 0.85 - rect.top) / (vh * 0.5 + rect.height), 0, 1);
 
 words.forEach((word, i) =&gt; {
   const t = clamp(progress * (n + 2) - i, 0, 1);   // word i starts when progress reaches i/(n+2)
   word.style.opacity = String(0.2 + 0.8 * t);
-});</code></pre></div>
-    <p>Multiplying progress by <code>n + 2</code> spreads the words along the timeline, and subtracting <code>i</code> delays each word a little more than the last. The <code>+ 2</code> gives the last word a bit of room so it finishes lit before the paragraph leaves.</p>
+});</code></pre>
+          </div>
+          <p>
+            Multiplying progress by <code>n + 2</code> spreads the words along
+            the timeline, and subtracting <code>i</code> delays each word a
+            little more than the last. The <code>+ 2</code> gives the last word
+            a bit of room so it finishes lit before the paragraph leaves.
+          </p>
 
-    <div class="demo"><div class="demo-label">Live demo · scroll inside the box</div>
-      <div class="demo-stage" style="padding:16px">
-        <div class="x-scroll" id="wordBox">
-          <div class="x-hint" style="height:240px">Scroll down ↓</div>
-          <p class="x-words" id="words">I build web applications end to end: the interface people use, the API behind it, and the database underneath.</p>
-          <div style="height:320px"></div>
-        </div>
-      </div>
-      <div class="x-readout">progress: <b id="prog">0.00</b></div>
-    </div>
+          <div class="demo">
+            <div class="demo-label">Live demo · scroll inside the box</div>
+            <div class="demo-stage" style="padding: 16px">
+              <div class="x-scroll" id="wordBox">
+                <div class="x-hint" style="height: 240px">Scroll down ↓</div>
+                <p class="x-words" id="words">
+                  I build web applications end to end: the interface people use,
+                  the API behind it, and the database underneath.
+                </p>
+                <div style="height: 320px"></div>
+              </div>
+            </div>
+            <div class="x-readout">progress: <b id="prog">0.00</b></div>
+          </div>
 
-    <div class="callout"><b class="t">Write to the DOM directly, not to state</b>
-      <p>Notice the code sets <code>el.style.opacity</code> through a ref instead of calling <code>setState</code>. State changes re-render the component 60 times a second, which is wasteful for something purely visual. For per-frame animation, touch the element directly. Reserve state for things that change what <em>renders</em>, like the active nav link.</p>
-    </div>
+          <div class="callout">
+            <b class="t">Write to the DOM directly, not to state</b>
+            <p>
+              Notice the code sets <code>el.style.opacity</code> through a ref
+              instead of calling <code>setState</code>. State changes re-render
+              the component 60 times a second, which is wasteful for something
+              purely visual. For per-frame animation, touch the element
+              directly. Reserve state for things that change what
+              <em>renders</em>, like the active nav link.
+            </p>
+          </div>
 
-    <h3>The modern, JavaScript-free option</h3>
-    <p>Newer browsers can do scrubbed animation in pure CSS with scroll-driven animations:</p>
-    <div class="codewrap"><pre><code>@keyframes fade-in { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
+          <h3>The modern, JavaScript-free option</h3>
+          <p>
+            Newer browsers can do scrubbed animation in pure CSS with
+            scroll-driven animations:
+          </p>
+          <div class="codewrap">
+            <pre><code>@keyframes fade-in { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
 
 @supports (animation-timeline: view()) {
   .card {
@@ -606,20 +1670,42 @@ words.forEach((word, i) =&gt; {
     animation-timeline: view();            /* progress = how far the element crossed the viewport */
     animation-range: entry 0% cover 30%;   /* start when it enters, finish at 30% covered */
   }
-}</code></pre></div>
-    <p>Browser support for this is still catching up, so check <code>caniuse.com</code> for <em>scroll-driven animations</em> before relying on it, and keep the JavaScript version (or no animation) as the fallback inside the <code>@supports</code> guard. The JavaScript approach you used works everywhere today.</p>
+}</code></pre>
+          </div>
+          <p>
+            Browser support for this is still catching up, so check
+            <code>caniuse.com</code> for
+            <em>scroll-driven animations</em> before relying on it, and keep the
+            JavaScript version (or no animation) as the fallback inside the
+            <code>@supports</code> guard. The JavaScript approach you used works
+            everywhere today.
+          </p>
 
-    <div class="where"><b>In your portfolio:</b> <code>Hero.jsx</code> (drift), <code>Statement.jsx</code> (words), both built on <code>hooks/useScrollFrame.js</code>.</div>
-  </section>
-  <!-- ===================================================== -->
-  <section class="chapter" id="countup">
-    <p class="num">Chapter 7</p>
-    <h2>Counting numbers with requestAnimationFrame</h2>
-    <p class="lead">CSS can't animate the text "0" into "99". For that you drive the animation yourself, one frame at a time.</p>
+          <div class="where">
+            <b>In your portfolio:</b> <code>Hero.jsx</code> (drift),
+            <code>Statement.jsx</code> (words), both built on
+            <code>hooks/useScrollFrame.js</code>.
+          </div>
+        </section>
+        <!-- ===================================================== -->
+        <section class="chapter" id="countup">
+          <p class="num">Chapter 7</p>
+          <h2>Counting numbers with requestAnimationFrame</h2>
+          <p class="lead">
+            CSS can't animate the text "0" into "99". For that you drive the
+            animation yourself, one frame at a time.
+          </p>
 
-    <p><code>requestAnimationFrame(callback)</code> calls you before every screen repaint and hands you a timestamp. You compute how much time has passed, convert it to progress from 0 to 1 (same idea as chapter 6), run it through an easing function, and update the number.</p>
+          <p>
+            <code>requestAnimationFrame(callback)</code> calls you before every
+            screen repaint and hands you a timestamp. You compute how much time
+            has passed, convert it to progress from 0 to 1 (same idea as chapter
+            6), run it through an easing function, and update the number.
+          </p>
 
-    <div class="codewrap has-file"><span class="file">Vanilla JS</span><pre><code>function countUp(el, to, duration = 1600) {
+          <div class="codewrap has-file">
+            <span class="file">Vanilla JS</span>
+            <pre><code>function countUp(el, to, duration = 1600) {
   let start;
   const easeOutExpo = (p) =&gt; (p === 1 ? 1 : 1 - Math.pow(2, -10 * p));
 
@@ -630,202 +1716,389 @@ words.forEach((word, i) =&gt; {
     if (p &lt; 1) requestAnimationFrame(tick);            // keep going until done
   }
   requestAnimationFrame(tick);
-}</code></pre></div>
-
-    <div class="demo"><div class="demo-label">Live demo · pick an easing and replay</div>
-      <div class="demo-stage"><div class="x-count"><span id="cnt">0</span><small>ms</small></div></div>
-      <div class="demo-controls">
-        <button class="btn" id="cntBtn">Replay</button>
-        <label>Easing
-          <select id="cntEase">
-            <option value="expo">easeOutExpo (portfolio)</option>
-            <option value="cubic">easeOutCubic</option>
-            <option value="linear">linear</option>
-          </select>
-        </label>
-      </div>
-    </div>
-    <p>With <code>linear</code> the number climbs at a steady, mechanical pace. With <code>easeOutExpo</code> it races up and slows into the final value, which feels like it is "landing" and draws the eye to the result.</p>
-
-    <h3>Making it start when visible</h3>
-    <p>In your portfolio the counter doesn't start on page load, it starts when you scroll to it. That's the <code>useInView</code> hook from chapter 5 feeding a <code>seen</code> flag into the effect that runs the loop, and returning <code>cancelAnimationFrame</code> as cleanup so the loop stops if the component disappears.</p>
-
-    <div class="callout warn"><b class="t">Small details that matter</b>
-      <p><strong>Jittering digits:</strong> proportional fonts make the number wiggle as digits change. Add <code>font-variant-numeric: tabular-nums</code> so every digit has the same width.</p>
-      <p><strong>Layout jumps:</strong> add <code>white-space: nowrap</code> so "99 ms" never wraps mid-animation.</p>
-      <p><strong>Reduced motion:</strong> if the user prefers less motion, skip the loop and set the final number immediately (chapter 11).</p>
-    </div>
-
-    <div class="where"><b>In your portfolio:</b> <code>components/ui/CountUp.jsx</code>, used by the stats under each project.</div>
-  </section>
-
-  <!-- ===================================================== -->
-  <section class="chapter" id="hover">
-    <p class="num">Chapter 8</p>
-    <h2>Hover patterns you can reuse</h2>
-    <p class="lead">Five small effects. Most "polished" interfaces are made of these.</p>
-
-    <div class="demo"><div class="demo-label">Live demo · hover (or tap) each one</div>
-      <div class="demo-stage">
-        <div class="x-grid">
-          <div>
-            <div class="x-cap">1. Dim the others</div>
-            <div class="x-dim"><span>Node.js</span><span>Express</span><span>PostgreSQL</span><span>React</span></div>
+}</code></pre>
           </div>
-          <div>
-            <div class="x-cap">2. Zoom inside a frame</div>
-            <div class="x-zoom"><div>Screenshot</div></div>
-          </div>
-          <div>
-            <div class="x-cap">3. Growing underline</div>
-            <a class="x-ul" href="#hover" onclick="return false">hello@example.com</a>
-          </div>
-          <div>
-            <div class="x-cap">4. Arrow nudge</div>
-            <a class="x-more" href="#hover" onclick="return false">Live demo <span>›</span></a>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <h3>1. Dim the others</h3>
-    <div class="codewrap"><pre><code>.items:hover span      { opacity: 0.32; }   /* hovering the group dims all children */
-.items span:hover      { opacity: 1; }      /* the hovered child restores itself   */</code></pre></div>
-    <p>Order and specificity do the work here: the second rule is more specific, so it wins for the hovered child. The group rule only applies while the pointer is inside the container.</p>
+          <div class="demo">
+            <div class="demo-label">Live demo · pick an easing and replay</div>
+            <div class="demo-stage">
+              <div class="x-count">
+                <span id="cnt">0</span><small>ms</small>
+              </div>
+            </div>
+            <div class="demo-controls">
+              <button class="btn" id="cntBtn">Replay</button>
+              <label
+                >Easing
+                <select id="cntEase">
+                  <option value="expo">easeOutExpo (portfolio)</option>
+                  <option value="cubic">easeOutCubic</option>
+                  <option value="linear">linear</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          <p>
+            With <code>linear</code> the number climbs at a steady, mechanical
+            pace. With <code>easeOutExpo</code> it races up and slows into the
+            final value, which feels like it is "landing" and draws the eye to
+            the result.
+          </p>
 
-    <h3>2. Zoom inside a frame</h3>
-    <div class="codewrap"><pre><code>.frame { overflow: hidden; border-radius: 16px; }
+          <h3>Making it start when visible</h3>
+          <p>
+            In your portfolio the counter doesn't start on page load, it starts
+            when you scroll to it. That's the <code>useInView</code> hook from
+            chapter 5 feeding a <code>seen</code> flag into the effect that runs
+            the loop, and returning <code>cancelAnimationFrame</code> as cleanup
+            so the loop stops if the component disappears.
+          </p>
+
+          <div class="callout warn">
+            <b class="t">Small details that matter</b>
+            <p>
+              <strong>Jittering digits:</strong> proportional fonts make the
+              number wiggle as digits change. Add
+              <code>font-variant-numeric: tabular-nums</code> so every digit has
+              the same width.
+            </p>
+            <p>
+              <strong>Layout jumps:</strong> add
+              <code>white-space: nowrap</code> so "99 ms" never wraps
+              mid-animation.
+            </p>
+            <p>
+              <strong>Reduced motion:</strong> if the user prefers less motion,
+              skip the loop and set the final number immediately (chapter 11).
+            </p>
+          </div>
+
+          <div class="where">
+            <b>In your portfolio:</b> <code>components/ui/CountUp.jsx</code>,
+            used by the stats under each project.
+          </div>
+        </section>
+
+        <!-- ===================================================== -->
+        <section class="chapter" id="hover">
+          <p class="num">Chapter 8</p>
+          <h2>Hover patterns you can reuse</h2>
+          <p class="lead">
+            Five small effects. Most "polished" interfaces are made of these.
+          </p>
+
+          <div class="demo">
+            <div class="demo-label">Live demo · hover (or tap) each one</div>
+            <div class="demo-stage">
+              <div class="x-grid">
+                <div>
+                  <div class="x-cap">1. Dim the others</div>
+                  <div class="x-dim">
+                    <span>Node.js</span><span>Express</span
+                    ><span>PostgreSQL</span><span>React</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="x-cap">2. Zoom inside a frame</div>
+                  <div class="x-zoom"><div>Screenshot</div></div>
+                </div>
+                <div>
+                  <div class="x-cap">3. Growing underline</div>
+                  <a class="x-ul" href="#hover" onclick="return false;"
+                    >hello@example.com</a
+                  >
+                </div>
+                <div>
+                  <div class="x-cap">4. Arrow nudge</div>
+                  <a class="x-more" href="#hover" onclick="return false;"
+                    >Live demo <span>›</span></a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h3>1. Dim the others</h3>
+          <div class="codewrap">
+            <pre><code>.items:hover span      { opacity: 0.32; }   /* hovering the group dims all children */
+.items span:hover      { opacity: 1; }      /* the hovered child restores itself   */</code></pre>
+          </div>
+          <p>
+            Order and specificity do the work here: the second rule is more
+            specific, so it wins for the hovered child. The group rule only
+            applies while the pointer is inside the container.
+          </p>
+
+          <h3>2. Zoom inside a frame</h3>
+          <div class="codewrap">
+            <pre><code>.frame { overflow: hidden; border-radius: 16px; }
 .frame img { transition: transform 1.4s var(--ease); }
-.frame:hover img { transform: scale(1.04); }</code></pre></div>
-    <p>The <strong>frame</strong> hides the overflow, so the image grows but the shape stays. Hover the frame, not the image, so the whole card is the target. A long duration with an ease-out curve makes it a slow, premium "breathe".</p>
+.frame:hover img { transform: scale(1.04); }</code></pre>
+          </div>
+          <p>
+            The <strong>frame</strong> hides the overflow, so the image grows
+            but the shape stays. Hover the frame, not the image, so the whole
+            card is the target. A long duration with an ease-out curve makes it
+            a slow, premium "breathe".
+          </p>
 
-    <h3>3. Growing underline</h3>
-    <div class="codewrap"><pre><code>.link {
+          <h3>3. Growing underline</h3>
+          <div class="codewrap">
+            <pre><code>.link {
   background: linear-gradient(currentColor, currentColor) 0 100% / 0 2px no-repeat;
   transition: background-size 0.6s var(--ease);
 }
-.link:hover { background-size: 100% 2px; }</code></pre></div>
-    <p>A one-color gradient is used as a line. Its <code>background-size</code> goes from 0 width to 100%, and <code>0 100%</code> pins it to the bottom-left. <code>currentColor</code> means it always matches the text color. (This is the underline on your email link.)</p>
+.link:hover { background-size: 100% 2px; }</code></pre>
+          </div>
+          <p>
+            A one-color gradient is used as a line. Its
+            <code>background-size</code> goes from 0 width to 100%, and
+            <code>0 100%</code> pins it to the bottom-left.
+            <code>currentColor</code> means it always matches the text color.
+            (This is the underline on your email link.)
+          </p>
 
-    <h3>4. Arrow nudge</h3>
-    <div class="codewrap"><pre><code>.more span { display: inline-block; transition: transform 0.35s var(--ease); }
-.more:hover span { transform: translateX(4px); }</code></pre></div>
-    <p>Note <code>display: inline-block</code>. Transforms do nothing on plain inline elements, a common "why won't it move?" bug.</p>
+          <h3>4. Arrow nudge</h3>
+          <div class="codewrap">
+            <pre><code>.more span { display: inline-block; transition: transform 0.35s var(--ease); }
+.more:hover span { transform: translateX(4px); }</code></pre>
+          </div>
+          <p>
+            Note <code>display: inline-block</code>. Transforms do nothing on
+            plain inline elements, a common "why won't it move?" bug.
+          </p>
 
-    <h3>5. Press feedback</h3>
-    <div class="codewrap"><pre><code>.btn:hover  { transform: scale(1.04); }
-.btn:active { transform: scale(0.97); }   /* shrink slightly while pressed */</code></pre></div>
+          <h3>5. Press feedback</h3>
+          <div class="codewrap">
+            <pre><code>.btn:hover  { transform: scale(1.04); }
+.btn:active { transform: scale(0.97); }   /* shrink slightly while pressed */</code></pre>
+          </div>
 
-    <h3>Only on devices that can hover</h3>
-    <div class="codewrap"><pre><code>@media (hover: hover) {
+          <h3>Only on devices that can hover</h3>
+          <div class="codewrap">
+            <pre><code>@media (hover: hover) {
   .btn:hover { transform: scale(1.04); }
-}</code></pre></div>
-    <p>On phones, a tap triggers <code>:hover</code> and it stays "stuck" until you tap elsewhere. Wrapping hover rules in this query avoids that. Keep <code>:active</code> outside it, since that is what gives touch screens their press feedback.</p>
+}</code></pre>
+          </div>
+          <p>
+            On phones, a tap triggers <code>:hover</code> and it stays "stuck"
+            until you tap elsewhere. Wrapping hover rules in this query avoids
+            that. Keep <code>:active</code> outside it, since that is what gives
+            touch screens their press feedback.
+          </p>
 
-    <div class="where"><b>In your portfolio:</b> <code>Skills.css</code> (dim others), <code>Media.css</code> (zoom), <code>Contact.css</code> (underline), <code>ArrowLink.css</code> (nudge), <code>Button.css</code> (press).</div>
-  </section>
+          <div class="where">
+            <b>In your portfolio:</b> <code>Skills.css</code> (dim others),
+            <code>Media.css</code> (zoom), <code>Contact.css</code> (underline),
+            <code>ArrowLink.css</code> (nudge), <code>Button.css</code> (press).
+          </div>
+        </section>
 
-  <!-- ===================================================== -->
-  <section class="chapter" id="responsive">
-    <p class="num">Chapter 9</p>
-    <h2>Responsive layout that doesn't break</h2>
-    <p class="lead">Animation looks amateur if the layout around it breaks on a phone. These are the tools used to make your portfolio work from 360px to ultrawide.</p>
+        <!-- ===================================================== -->
+        <section class="chapter" id="responsive">
+          <p class="num">Chapter 9</p>
+          <h2>Responsive layout that doesn't break</h2>
+          <p class="lead">
+            Animation looks amateur if the layout around it breaks on a phone.
+            These are the tools used to make your portfolio work from 360px to
+            ultrawide.
+          </p>
 
-    <h3>1. Fluid sizes with clamp()</h3>
-    <div class="codewrap"><pre><code>font-size: clamp(36px, 10vw, 112px);
-/*                min   preferred  max          */</code></pre></div>
-    <p>The browser uses <code>10vw</code> (10% of the viewport width) but never goes below 36px or above 112px. On a 390px phone that's 39px, on a 800px tablet 80px, on a desktop it stops at 112px. One line replaces three media queries.</p>
+          <h3>1. Fluid sizes with clamp()</h3>
+          <div class="codewrap">
+            <pre><code>font-size: clamp(36px, 10vw, 112px);
+/*                min   preferred  max          */</code></pre>
+          </div>
+          <p>
+            The browser uses <code>10vw</code> (10% of the viewport width) but
+            never goes below 36px or above 112px. On a 390px phone that's 39px,
+            on a 800px tablet 80px, on a desktop it stops at 112px. One line
+            replaces three media queries.
+          </p>
 
-    <h3>2. Grid for columns</h3>
-    <div class="codewrap"><pre><code>.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+          <h3>2. Grid for columns</h3>
+          <div class="codewrap">
+            <pre><code>.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
 
 @media (max-width: 560px) {
   .stats { grid-template-columns: 1fr; }     /* one column on phones */
-}</code></pre></div>
-    <p><code>1fr</code> means "one share of the free space". <code>repeat(3, 1fr)</code> is three equal columns.</p>
+}</code></pre>
+          </div>
+          <p>
+            <code>1fr</code> means "one share of the free space".
+            <code>repeat(3, 1fr)</code> is three equal columns.
+          </p>
 
-    <h3>3. Media queries vs container queries</h3>
-    <p>A media query asks "how wide is the <em>screen</em>?" A <strong>container query</strong> asks "how wide is the <em>box I'm inside</em>?" That makes a component responsive to where it's placed, not just which device it's on. Drag the slider to resize the box and watch the layout switch, with no change to the screen size:</p>
+          <h3>3. Media queries vs container queries</h3>
+          <p>
+            A media query asks "how wide is the <em>screen</em>?" A
+            <strong>container query</strong> asks "how wide is the
+            <em>box I'm inside</em>?" That makes a component responsive to where
+            it's placed, not just which device it's on. Drag the slider to
+            resize the box and watch the layout switch, with no change to the
+            screen size:
+          </p>
 
-    <div class="demo"><div class="demo-label">Live demo · container query</div>
-      <div class="demo-stage">
-        <div class="x-wrapw" id="cqw" style="width: 560px">
-          <div class="x-cq">
-            <div class="x-stats">
-              <div class="x-stat"><b>10</b><span>REST API endpoints</span></div>
-              <div class="x-stat"><b>99</b><span>ms warm response</span></div>
-              <div class="x-stat"><b>15</b><span>bcrypt salt rounds</span></div>
+          <div class="demo">
+            <div class="demo-label">Live demo · container query</div>
+            <div class="demo-stage">
+              <div class="x-wrapw" id="cqw" style="width: 560px">
+                <div class="x-cq">
+                  <div class="x-stats">
+                    <div class="x-stat">
+                      <b>10</b><span>REST API endpoints</span>
+                    </div>
+                    <div class="x-stat">
+                      <b>99</b><span>ms warm response</span>
+                    </div>
+                    <div class="x-stat">
+                      <b>15</b><span>bcrypt salt rounds</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="demo-controls">
+              <label
+                >Box width
+                <input type="range" id="cw" min="280" max="620" value="560" />
+                <output id="cwo">560px</output></label
+              >
             </div>
           </div>
-        </div>
-      </div>
-      <div class="demo-controls"><label>Box width <input type="range" id="cw" min="280" max="620" value="560" /> <output id="cwo">560px</output></label></div>
-    </div>
-    <div class="codewrap"><pre><code>.wrapper { container-type: inline-size; }
+          <div class="codewrap">
+            <pre><code>.wrapper { container-type: inline-size; }
 
 @container (max-width: 440px) {
   .stats { grid-template-columns: 1fr; }
-}</code></pre></div>
-    <p>Your portfolio uses media queries, which is fine for a page-level layout. Use container queries when you build a component (a card, a stat block) that will be reused in different-width places.</p>
+}</code></pre>
+          </div>
+          <p>
+            Your portfolio uses media queries, which is fine for a page-level
+            layout. Use container queries when you build a component (a card, a
+            stat block) that will be reused in different-width places.
+          </p>
 
-    <h3>4. Pick breakpoints where the layout breaks, not by device</h3>
-    <p>Phones and tablets come in hundreds of sizes. Instead of "iPhone breakpoint", ask "at what width does this look bad?" Your portfolio's breakpoints came from exactly that: the stats cramped at 560px, the About columns got tight at 720px, the nav links ran out of room at 760px.</p>
+          <h3>4. Pick breakpoints where the layout breaks, not by device</h3>
+          <p>
+            Phones and tablets come in hundreds of sizes. Instead of "iPhone
+            breakpoint", ask "at what width does this look bad?" Your
+            portfolio's breakpoints came from exactly that: the stats cramped at
+            560px, the About columns got tight at 720px, the nav links ran out
+            of room at 760px.
+          </p>
 
-    <h3>5. Mobile browser details</h3>
-    <ul>
-      <li><strong>Viewport units:</strong> <code>100vh</code> on phones includes the area behind the browser bars, so content gets clipped. Use <code>100svh</code> (smallest visible height), with <code>100vh</code> as the fallback line above it.</li>
-      <li><strong>Notches and home bars:</strong> add <code>viewport-fit=cover</code> to the viewport meta tag, then pad with <code>env(safe-area-inset-top)</code> and friends so content doesn't hide behind them.</li>
-      <li><strong>Touch targets:</strong> keep tappable things about 44px tall. That's why the nav links and arrow links have extra vertical padding.</li>
-      <li><strong>Overflow:</strong> long strings (like an email) can push the page wider than the screen. <code>overflow-wrap: anywhere</code> plus a <code>clamp()</code> font size keeps them inside.</li>
-    </ul>
-    <div class="codewrap"><pre><code>.hero { min-height: 100vh; min-height: 100svh; }      /* later line wins where supported */
-.nav  { padding-top: env(safe-area-inset-top, 0px); }</code></pre></div>
+          <h3>5. Mobile browser details</h3>
+          <ul>
+            <li>
+              <strong>Viewport units:</strong> <code>100vh</code> on phones
+              includes the area behind the browser bars, so content gets
+              clipped. Use <code>100svh</code> (smallest visible height), with
+              <code>100vh</code> as the fallback line above it.
+            </li>
+            <li>
+              <strong>Notches and home bars:</strong> add
+              <code>viewport-fit=cover</code> to the viewport meta tag, then pad
+              with <code>env(safe-area-inset-top)</code> and friends so content
+              doesn't hide behind them.
+            </li>
+            <li>
+              <strong>Touch targets:</strong> keep tappable things about 44px
+              tall. That's why the nav links and arrow links have extra vertical
+              padding.
+            </li>
+            <li>
+              <strong>Overflow:</strong> long strings (like an email) can push
+              the page wider than the screen.
+              <code>overflow-wrap: anywhere</code> plus a
+              <code>clamp()</code> font size keeps them inside.
+            </li>
+          </ul>
+          <div class="codewrap">
+            <pre><code>.hero { min-height: 100vh; min-height: 100svh; }      /* later line wins where supported */
+.nav  { padding-top: env(safe-area-inset-top, 0px); }</code></pre>
+          </div>
 
-    <div class="where"><b>In your portfolio:</b> the media queries at the bottom of <code>Work.css</code> (stats become rows), <code>About.css</code>, <code>Skills.css</code> and <code>Nav.css</code>. Variables for the safe areas are in <code>tokens.css</code>.</div>
-  </section>
+          <div class="where">
+            <b>In your portfolio:</b> the media queries at the bottom of
+            <code>Work.css</code> (stats become rows), <code>About.css</code>,
+            <code>Skills.css</code> and <code>Nav.css</code>. Variables for the
+            safe areas are in <code>tokens.css</code>.
+          </div>
+        </section>
 
-  <!-- ===================================================== -->
-  <section class="chapter" id="nav">
-    <p class="num">Chapter 10</p>
-    <h2>The navigation: blur, hamburger and menu overlay</h2>
-    <p class="lead">Three separate ideas in one component.</p>
+        <!-- ===================================================== -->
+        <section class="chapter" id="nav">
+          <p class="num">Chapter 10</p>
+          <h2>The navigation: blur, hamburger and menu overlay</h2>
+          <p class="lead">Three separate ideas in one component.</p>
 
-    <h3>1. The frosted nav bar</h3>
-    <div class="codewrap"><pre><code>.nav {
+          <h3>1. The frosted nav bar</h3>
+          <div class="codewrap">
+            <pre><code>.nav {
   position: fixed; top: 0; left: 0; right: 0;
   background: rgba(251, 251, 253, 0.72);          /* semi-transparent */
   backdrop-filter: saturate(180%) blur(20px);     /* blurs what's behind it */
   border-bottom: 1px solid transparent;
   transition: border-color 0.4s ease;
 }
-.nav.solid { border-bottom-color: var(--line); }  /* JS adds .solid after scrolling 8px */</code></pre></div>
-    <p>The background must be semi-transparent, or there's nothing to blur. Add <code>-webkit-backdrop-filter</code> alongside for Safari support in older versions.</p>
+.nav.solid { border-bottom-color: var(--line); }  /* JS adds .solid after scrolling 8px */</code></pre>
+          </div>
+          <p>
+            The background must be semi-transparent, or there's nothing to blur.
+            Add <code>-webkit-backdrop-filter</code> alongside for Safari
+            support in older versions.
+          </p>
 
-    <h3>2. The hamburger that becomes an X</h3>
-    <p>Just two thin bars, positioned absolutely. Opening the menu rotates them 45° in opposite directions, nudged toward the center so they cross.</p>
-    <div class="codewrap"><pre><code>.burger i { position: absolute; left: 13px; right: 13px; height: 1.5px;
+          <h3>2. The hamburger that becomes an X</h3>
+          <p>
+            Just two thin bars, positioned absolutely. Opening the menu rotates
+            them 45° in opposite directions, nudged toward the center so they
+            cross.
+          </p>
+          <div class="codewrap">
+            <pre><code>.burger i { position: absolute; left: 13px; right: 13px; height: 1.5px;
             background: currentColor; transition: transform 0.45s var(--ease); }
 .burger i:nth-child(1) { top: 19px; }
 .burger i:nth-child(2) { top: 25px; }
 
 .open .burger i:nth-child(1) { transform: translateY(3px)  rotate(45deg); }
-.open .burger i:nth-child(2) { transform: translateY(-3px) rotate(-45deg); }</code></pre></div>
-
-    <h3>3. The full-screen menu with staggered links</h3>
-    <div class="demo"><div class="demo-label">Live demo · tap the menu button</div>
-      <div class="demo-stage" style="padding: 24px 12px">
-        <div class="x-phone" id="phone">
-          <div class="x-bar"><span>Rhythm</span><button class="x-burger" id="burger" aria-label="Open menu" aria-expanded="false"><i></i><i></i></button></div>
-          <div class="x-menu">
-            <a href="#nav" style="--i: 0" onclick="return false">Work</a>
-            <a href="#nav" style="--i: 1" onclick="return false">About</a>
-            <a href="#nav" style="--i: 2" onclick="return false">Skills</a>
-            <a href="#nav" style="--i: 3" onclick="return false">Contact</a>
+.open .burger i:nth-child(2) { transform: translateY(-3px) rotate(-45deg); }</code></pre>
           </div>
-        </div>
-      </div>
-    </div>
-    <div class="codewrap"><pre><code>.menu {
+
+          <h3>3. The full-screen menu with staggered links</h3>
+          <div class="demo">
+            <div class="demo-label">Live demo · tap the menu button</div>
+            <div class="demo-stage" style="padding: 24px 12px">
+              <div class="x-phone" id="phone">
+                <div class="x-bar">
+                  <span>Rhythm</span
+                  ><button
+                    class="x-burger"
+                    id="burger"
+                    aria-label="Open menu"
+                    aria-expanded="false"
+                  >
+                    <i></i><i></i>
+                  </button>
+                </div>
+                <div class="x-menu">
+                  <a href="#nav" style="--i: 0" onclick="return false;">Work</a>
+                  <a href="#nav" style="--i: 1" onclick="return false;"
+                    >About</a
+                  >
+                  <a href="#nav" style="--i: 2" onclick="return false;"
+                    >Skills</a
+                  >
+                  <a href="#nav" style="--i: 3" onclick="return false;"
+                    >Contact</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="codewrap">
+            <pre><code>.menu {
   position: fixed; inset: 0;
   opacity: 0;
   visibility: hidden;
@@ -840,352 +2113,710 @@ words.forEach((word, i) =&gt; {
 .menu a { opacity: 0; transform: translateY(14px);
           transition: opacity 0.6s var(--ease), transform 0.6s var(--ease); }
 .menu.open a { opacity: 1; transform: none;
-               transition-delay: calc(var(--i) * 60ms + 80ms); }   /* stagger */</code></pre></div>
+               transition-delay: calc(var(--i) * 60ms + 80ms); }   /* stagger */</code></pre>
+          </div>
 
-    <p><strong>Why <code>visibility</code> as well as <code>opacity</code>?</strong> An element at <code>opacity: 0</code> is invisible but still clickable and focusable by keyboard. <code>visibility: hidden</code> removes both, but it can't be faded. The trick is the transition on <code>visibility</code>: <code>0s linear 0.45s</code> means "change instantly, but only after waiting 0.45s", which is after the fade-out finished. On the way in, the rule overrides it so it flips immediately.</p>
+          <p>
+            <strong
+              >Why <code>visibility</code> as well as
+              <code>opacity</code>?</strong
+            >
+            An element at <code>opacity: 0</code> is invisible but still
+            clickable and focusable by keyboard.
+            <code>visibility: hidden</code> removes both, but it can't be faded.
+            The trick is the transition on <code>visibility</code>:
+            <code>0s linear 0.45s</code> means "change instantly, but only after
+            waiting 0.45s", which is after the fade-out finished. On the way in,
+            the rule overrides it so it flips immediately.
+          </p>
 
-    <h3>The JavaScript around it</h3>
-    <ul>
-      <li>Toggle an <code>open</code> class from a button, and keep <code>aria-expanded</code> in sync for screen readers.</li>
-      <li>Lock page scroll while open: <code>document.body.style.overflow = 'hidden'</code>, restored on close.</li>
-      <li>Close on <kbd>Escape</kbd>, on link click, and if the window grows past the mobile breakpoint.</li>
-    </ul>
+          <h3>The JavaScript around it</h3>
+          <ul>
+            <li>
+              Toggle an <code>open</code> class from a button, and keep
+              <code>aria-expanded</code> in sync for screen readers.
+            </li>
+            <li>
+              Lock page scroll while open:
+              <code>document.body.style.overflow = 'hidden'</code>, restored on
+              close.
+            </li>
+            <li>
+              Close on <kbd>Escape</kbd>, on link click, and if the window grows
+              past the mobile breakpoint.
+            </li>
+          </ul>
 
-    <div class="callout warn"><b class="t">The bug that costs everyone an afternoon</b>
-      <p>If a parent has <code>backdrop-filter</code>, <code>filter</code>, <code>transform</code> or <code>perspective</code>, it becomes the <em>containing block</em> for any <code>position: fixed</code> children. Your "full-screen" menu then fills only the nav bar. That is why the portfolio renders the menu as a <strong>sibling</strong> of the header, not a child.</p>
-    </div>
+          <div class="callout warn">
+            <b class="t">The bug that costs everyone an afternoon</b>
+            <p>
+              If a parent has <code>backdrop-filter</code>, <code>filter</code>,
+              <code>transform</code> or <code>perspective</code>, it becomes the
+              <em>containing block</em> for any
+              <code>position: fixed</code> children. Your "full-screen" menu
+              then fills only the nav bar. That is why the portfolio renders the
+              menu as a <strong>sibling</strong> of the header, not a child.
+            </p>
+          </div>
 
-    <div class="where"><b>In your portfolio:</b> <code>components/layout/Nav.jsx</code> and <code>Nav.css</code>.</div>
-  </section>
+          <div class="where">
+            <b>In your portfolio:</b> <code>components/layout/Nav.jsx</code> and
+            <code>Nav.css</code>.
+          </div>
+        </section>
 
-  <!-- ===================================================== -->
-  <section class="chapter" id="perf-a11y">
-    <p class="num">Chapter 11</p>
-    <h2>Performance and accessibility</h2>
-    <p class="lead">The difference between an animation that impresses and one that makes someone's laptop fan spin up or makes them feel unwell.</p>
+        <!-- ===================================================== -->
+        <section class="chapter" id="perf-a11y">
+          <p class="num">Chapter 11</p>
+          <h2>Performance and accessibility</h2>
+          <p class="lead">
+            The difference between an animation that impresses and one that
+            makes someone's laptop fan spin up or makes them feel unwell.
+          </p>
 
-    <h3>Performance checklist</h3>
-    <ul>
-      <li><strong>Only animate transform and opacity</strong> (chapter 1).</li>
-      <li><strong>Use <code>will-change</code> sparingly.</strong> <code>will-change: transform</code> tells the browser to promote the element to its own layer ahead of time. Great for the hero that moves on scroll. Put it on dozens of elements and you waste memory. Never apply it to everything.</li>
-      <li><strong>Don't read layout right after writing styles</strong> in the same frame. Calling <code>getBoundingClientRect()</code> after changing a style forces the browser to recalculate immediately. Read all values first, then write.</li>
-      <li><strong>Throttle scroll work</strong> with <code>requestAnimationFrame</code> and use <code>{ passive: true }</code> (chapter 6).</li>
-      <li><strong>Stop watching when done.</strong> Disconnect observers after a one-time reveal.</li>
-    </ul>
+          <h3>Performance checklist</h3>
+          <ul>
+            <li>
+              <strong>Only animate transform and opacity</strong> (chapter 1).
+            </li>
+            <li>
+              <strong>Use <code>will-change</code> sparingly.</strong>
+              <code>will-change: transform</code> tells the browser to promote
+              the element to its own layer ahead of time. Great for the hero
+              that moves on scroll. Put it on dozens of elements and you waste
+              memory. Never apply it to everything.
+            </li>
+            <li>
+              <strong>Don't read layout right after writing styles</strong> in
+              the same frame. Calling <code>getBoundingClientRect()</code> after
+              changing a style forces the browser to recalculate immediately.
+              Read all values first, then write.
+            </li>
+            <li>
+              <strong>Throttle scroll work</strong> with
+              <code>requestAnimationFrame</code> and use
+              <code>{ passive: true }</code> (chapter 6).
+            </li>
+            <li>
+              <strong>Stop watching when done.</strong> Disconnect observers
+              after a one-time reveal.
+            </li>
+          </ul>
 
-    <h3>See it in DevTools</h3>
-    <ul>
-      <li><strong>Rendering tab</strong> (Chrome DevTools, three-dot menu, More tools, Rendering): turn on <em>Paint flashing</em> to see which areas repaint, and <em>Frame Rendering Stats</em> for a live FPS meter.</li>
-      <li><strong>Performance tab:</strong> record while you scroll. Long red bars or frames over 16ms show where you're dropping frames.</li>
-    </ul>
+          <h3>See it in DevTools</h3>
+          <ul>
+            <li>
+              <strong>Rendering tab</strong> (Chrome DevTools, three-dot menu,
+              More tools, Rendering): turn on <em>Paint flashing</em> to see
+              which areas repaint, and <em>Frame Rendering Stats</em> for a live
+              FPS meter.
+            </li>
+            <li>
+              <strong>Performance tab:</strong> record while you scroll. Long
+              red bars or frames over 16ms show where you're dropping frames.
+            </li>
+          </ul>
 
-    <h3>Respect reduced motion</h3>
-    <p>Some people get dizziness or nausea from parallax and large movement. They enable "Reduce motion" in their operating system, and you can detect it:</p>
-    <div class="codewrap"><pre><code>@media (prefers-reduced-motion: reduce) {
+          <h3>Respect reduced motion</h3>
+          <p>
+            Some people get dizziness or nausea from parallax and large
+            movement. They enable "Reduce motion" in their operating system, and
+            you can detect it:
+          </p>
+          <div class="codewrap">
+            <pre><code>@media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .reveal { opacity: 1; transform: none; transition: none; }
   .line-in { transform: none; animation: none; }
-}</code></pre></div>
-    <div class="codewrap"><pre><code>// JavaScript side
+}</code></pre>
+          </div>
+          <div class="codewrap">
+            <pre><code>// JavaScript side
 export const prefersReducedMotion =
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-if (prefersReducedMotion) { /* skip parallax, set final values immediately */ }</code></pre></div>
-    <p>This doesn't mean "no animation". It means <strong>no large movement</strong>. Content should still be fully usable and visible.</p>
+if (prefersReducedMotion) { /* skip parallax, set final values immediately */ }</code></pre>
+          </div>
+          <p>
+            This doesn't mean "no animation". It means
+            <strong>no large movement</strong>. Content should still be fully
+            usable and visible.
+          </p>
 
-    <h3>Other accessibility basics</h3>
-    <ul>
-      <li>Animation should never hide content a user needs. Never make the only way to read something depend on an animation finishing.</li>
-      <li>Menu buttons need <code>aria-label</code> and <code>aria-expanded</code>. Hidden menus should use <code>visibility: hidden</code> so keyboards can't tab into them.</li>
-      <li>Keep keyboard focus visible. Don't remove outlines without replacing them.</li>
-    </ul>
-  </section>
+          <h3>Other accessibility basics</h3>
+          <ul>
+            <li>
+              Animation should never hide content a user needs. Never make the
+              only way to read something depend on an animation finishing.
+            </li>
+            <li>
+              Menu buttons need <code>aria-label</code> and
+              <code>aria-expanded</code>. Hidden menus should use
+              <code>visibility: hidden</code> so keyboards can't tab into them.
+            </li>
+            <li>
+              Keep keyboard focus visible. Don't remove outlines without
+              replacing them.
+            </li>
+          </ul>
+        </section>
 
-  <!-- ===================================================== -->
-  <section class="chapter" id="pitfalls">
-    <p class="num">Chapter 12</p>
-    <h2>When it doesn't work: symptoms and fixes</h2>
-    <div class="tablewrap"><table>
-      <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
-      <tbody>
-        <tr><td>Transition doesn't play</td><td>Both states don't have a real value, or you animated <code>display</code></td><td>Give both states explicit values; use opacity and visibility</td></tr>
-        <tr><td>It jumps back after animating</td><td>Missing <code>animation-fill-mode: forwards</code></td><td>Add <code>forwards</code> (or <code>both</code>)</td></tr>
-        <tr><td><code>transform</code> does nothing</td><td>Element is <code>display: inline</code></td><td>Use <code>inline-block</code>, <code>block</code> or flex/grid children</td></tr>
-        <tr><td>Hover effect sticks on phone</td><td>Touch triggers <code>:hover</code></td><td>Wrap in <code>@media (hover: hover)</code></td></tr>
-        <tr><td>Letter tails cut off in a text mask</td><td><code>overflow: hidden</code> clips to the line box</td><td><code>padding-bottom: 0.1em; margin-bottom: -0.1em</code></td></tr>
-        <tr><td>Fixed menu only fills the header</td><td>A parent has <code>backdrop-filter</code>/<code>transform</code></td><td>Move the menu out of that parent</td></tr>
-        <tr><td>Content invisible when JS is off or slow</td><td>Reveal elements start at <code>opacity: 0</code></td><td>Scope the hidden state under a <code>.js</code> class</td></tr>
-        <tr><td>Page scrolls sideways on phone</td><td>Something wider than the screen (long text, big image)</td><td>Find it with DevTools; use <code>overflow-wrap</code>, <code>max-width: 100%</code>, <code>clamp()</code></td></tr>
-        <tr><td>Bottom of page cut off on iPhone</td><td><code>100vh</code> includes the browser bar</td><td>Use <code>100svh</code> or <code>dvh</code></td></tr>
-        <tr><td>Numbers wiggle while counting</td><td>Proportional digit widths</td><td><code>font-variant-numeric: tabular-nums</code></td></tr>
-        <tr><td>Scroll feels laggy</td><td>Heavy work in scroll handler, or animating layout properties</td><td><code>requestAnimationFrame</code>, passive listener, transform/opacity only</td></tr>
-        <tr><td>Everything animates on page load at once</td><td>Reveal observer fires for all visible elements</td><td>Add per-element delays with <code>--d</code></td></tr>
-      </tbody>
-    </table></div>
-  </section>
+        <!-- ===================================================== -->
+        <section class="chapter" id="pitfalls">
+          <p class="num">Chapter 12</p>
+          <h2>When it doesn't work: symptoms and fixes</h2>
+          <div class="tablewrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Symptom</th>
+                  <th>Likely cause</th>
+                  <th>Fix</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Transition doesn't play</td>
+                  <td>
+                    Both states don't have a real value, or you animated
+                    <code>display</code>
+                  </td>
+                  <td>
+                    Give both states explicit values; use opacity and visibility
+                  </td>
+                </tr>
+                <tr>
+                  <td>It jumps back after animating</td>
+                  <td>Missing <code>animation-fill-mode: forwards</code></td>
+                  <td>Add <code>forwards</code> (or <code>both</code>)</td>
+                </tr>
+                <tr>
+                  <td><code>transform</code> does nothing</td>
+                  <td>Element is <code>display: inline</code></td>
+                  <td>
+                    Use <code>inline-block</code>, <code>block</code> or
+                    flex/grid children
+                  </td>
+                </tr>
+                <tr>
+                  <td>Hover effect sticks on phone</td>
+                  <td>Touch triggers <code>:hover</code></td>
+                  <td>Wrap in <code>@media (hover: hover)</code></td>
+                </tr>
+                <tr>
+                  <td>Letter tails cut off in a text mask</td>
+                  <td><code>overflow: hidden</code> clips to the line box</td>
+                  <td>
+                    <code>padding-bottom: 0.1em; margin-bottom: -0.1em</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Fixed menu only fills the header</td>
+                  <td>
+                    A parent has <code>backdrop-filter</code>/<code
+                      >transform</code
+                    >
+                  </td>
+                  <td>Move the menu out of that parent</td>
+                </tr>
+                <tr>
+                  <td>Content invisible when JS is off or slow</td>
+                  <td>Reveal elements start at <code>opacity: 0</code></td>
+                  <td>Scope the hidden state under a <code>.js</code> class</td>
+                </tr>
+                <tr>
+                  <td>Page scrolls sideways on phone</td>
+                  <td>
+                    Something wider than the screen (long text, big image)
+                  </td>
+                  <td>
+                    Find it with DevTools; use <code>overflow-wrap</code>,
+                    <code>max-width: 100%</code>, <code>clamp()</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Bottom of page cut off on iPhone</td>
+                  <td><code>100vh</code> includes the browser bar</td>
+                  <td>Use <code>100svh</code> or <code>dvh</code></td>
+                </tr>
+                <tr>
+                  <td>Numbers wiggle while counting</td>
+                  <td>Proportional digit widths</td>
+                  <td><code>font-variant-numeric: tabular-nums</code></td>
+                </tr>
+                <tr>
+                  <td>Scroll feels laggy</td>
+                  <td>
+                    Heavy work in scroll handler, or animating layout properties
+                  </td>
+                  <td>
+                    <code>requestAnimationFrame</code>, passive listener,
+                    transform/opacity only
+                  </td>
+                </tr>
+                <tr>
+                  <td>Everything animates on page load at once</td>
+                  <td>Reveal observer fires for all visible elements</td>
+                  <td>Add per-element delays with <code>--d</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
 
-  <!-- ===================================================== -->
-  <section class="chapter" id="recipes">
-    <p class="num">Chapter 13</p>
-    <h2>Copy-paste recipes</h2>
-    <p class="lead">A toolkit to carry into any project. Each one is complete and independent.</p>
+        <!-- ===================================================== -->
+        <section class="chapter" id="recipes">
+          <p class="num">Chapter 13</p>
+          <h2>Copy-paste recipes</h2>
+          <p class="lead">
+            A toolkit to carry into any project. Each one is complete and
+            independent.
+          </p>
 
-    <h3>Fade up on scroll (CSS and vanilla JS)</h3>
-    <div class="codewrap"><pre><code>.reveal { opacity: 0; transform: translateY(30px);
+          <h3>Fade up on scroll (CSS and vanilla JS)</h3>
+          <div class="codewrap">
+            <pre><code>.reveal { opacity: 0; transform: translateY(30px);
           transition: opacity 1s cubic-bezier(.16,1,.3,1), transform 1s cubic-bezier(.16,1,.3,1); }
 .reveal.in { opacity: 1; transform: none; }
 
 new IntersectionObserver((es, io) =&gt; es.forEach(e =&gt; {
   if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-}), { threshold: 0.12 }).observe(el);   // call .observe(el) for each element</code></pre></div>
+}), { threshold: 0.12 }).observe(el);   // call .observe(el) for each element</code></pre>
+          </div>
 
-    <h3>Stagger a group</h3>
-    <div class="codewrap"><pre><code>.stagger &gt; * { transition-delay: calc(var(--i, 0) * 80ms); }
-/* give each child style="--i: 0", "--i: 1", ... */</code></pre></div>
+          <h3>Stagger a group</h3>
+          <div class="codewrap">
+            <pre><code>.stagger &gt; * { transition-delay: calc(var(--i, 0) * 80ms); }
+/* give each child style="--i: 0", "--i: 1", ... */</code></pre>
+          </div>
 
-    <h3>Hover lift for cards</h3>
-    <div class="codewrap"><pre><code>.card { transition: transform 0.5s cubic-bezier(.16,1,.3,1), box-shadow 0.5s ease; }
+          <h3>Hover lift for cards</h3>
+          <div class="codewrap">
+            <pre><code>.card { transition: transform 0.5s cubic-bezier(.16,1,.3,1), box-shadow 0.5s ease; }
 @media (hover: hover) {
   .card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(0,0,0,.12); }
-}</code></pre></div>
+}</code></pre>
+          </div>
 
-    <h3>Text slide-up on load</h3>
-    <div class="codewrap"><pre><code>&lt;h1&gt;&lt;span class="line"&gt;&lt;span class="line-in"&gt;Hello world&lt;/span&gt;&lt;/span&gt;&lt;/h1&gt;
+          <h3>Text slide-up on load</h3>
+          <div class="codewrap">
+            <pre><code>&lt;h1&gt;&lt;span class="line"&gt;&lt;span class="line-in"&gt;Hello world&lt;/span&gt;&lt;/span&gt;&lt;/h1&gt;
 
 .line { display: block; overflow: hidden; padding-bottom: .1em; margin-bottom: -.1em; }
 .line-in { display: block; transform: translateY(112%); animation: up 1.1s cubic-bezier(.16,1,.3,1) forwards; }
-@keyframes up { to { transform: none; } }</code></pre></div>
+@keyframes up { to { transform: none; } }</code></pre>
+          </div>
 
-    <h3>Scroll progress helper</h3>
-    <div class="codewrap"><pre><code>const clamp = (n, a, b) =&gt; Math.min(b, Math.max(a, n));
+          <h3>Scroll progress helper</h3>
+          <div class="codewrap">
+            <pre><code>const clamp = (n, a, b) =&gt; Math.min(b, Math.max(a, n));
 const progress = (value, start, end) =&gt; clamp((value - start) / (end - start), 0, 1);
 
 // example: fade out over the first 400px of scroll
-el.style.opacity = 1 - progress(scrollY, 0, 400);</code></pre></div>
+el.style.opacity = 1 - progress(scrollY, 0, 400);</code></pre>
+          </div>
 
-    <h3>Smooth anchor scrolling that respects a fixed header</h3>
-    <div class="codewrap"><pre><code>html { scroll-behavior: smooth; scroll-padding-top: 48px; }   /* height of your nav */
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }</code></pre></div>
+          <h3>Smooth anchor scrolling that respects a fixed header</h3>
+          <div class="codewrap">
+            <pre><code>html { scroll-behavior: smooth; scroll-padding-top: 48px; }   /* height of your nav */
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }</code></pre>
+          </div>
 
-    <h3>Reduced-motion safety net</h3>
-    <div class="codewrap"><pre><code>@media (prefers-reduced-motion: reduce) {
+          <h3>Reduced-motion safety net</h3>
+          <div class="codewrap">
+            <pre><code>@media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-}</code></pre></div>
-  </section>
+}</code></pre>
+          </div>
+        </section>
 
-  <!-- ===================================================== -->
-  <section class="chapter" id="practice">
-    <p class="num">Chapter 14</p>
-    <h2>Practice and where to go next</h2>
+        <!-- ===================================================== -->
+        <section class="chapter" id="practice">
+          <p class="num">Chapter 14</p>
+          <h2>Practice and where to go next</h2>
 
-    <h3>Exercises, in order</h3>
-    <ol class="list">
-      <li><strong>Change the feel.</strong> In your portfolio, set <code>--ease</code> to <code>ease</code> and the reveal duration to 300ms. Notice how much cheaper it feels, then put it back.</li>
-      <li><strong>Add a hover lift</strong> to the project tiles using the recipe in chapter 13.</li>
-      <li><strong>Add a new stagger.</strong> Make the tags at the bottom of each project appear one after another with <code>--i</code>.</li>
-      <li><strong>Build a scroll progress bar</strong>: a 3px line at the top of the page whose width equals <code>scrollY / (document.height - window.height)</code>. Use the progress helper and write to the style directly.</li>
-      <li><strong>Make the stats count with a different easing.</strong> Try <code>easeOutCubic</code>, then compare.</li>
-      <li><strong>Add a "back to top" button</strong> that fades in after the user scrolls 600px (state plus a transition on opacity and visibility).</li>
-      <li><strong>Rebuild one effect without React.</strong> Make the scroll reveal work in a plain HTML file using only the vanilla code above.</li>
-      <li><strong>Try a scroll-driven animation</strong> with <code>animation-timeline: view()</code> inside an <code>@supports</code> block, in a browser that supports it.</li>
-    </ol>
+          <h3>Exercises, in order</h3>
+          <ol class="list">
+            <li>
+              <strong>Change the feel.</strong> In your portfolio, set
+              <code>--ease</code> to <code>ease</code> and the reveal duration
+              to 300ms. Notice how much cheaper it feels, then put it back.
+            </li>
+            <li>
+              <strong>Add a hover lift</strong> to the project tiles using the
+              recipe in chapter 13.
+            </li>
+            <li>
+              <strong>Add a new stagger.</strong> Make the tags at the bottom of
+              each project appear one after another with <code>--i</code>.
+            </li>
+            <li>
+              <strong>Build a scroll progress bar</strong>: a 3px line at the
+              top of the page whose width equals
+              <code>scrollY / (document.height - window.height)</code>. Use the
+              progress helper and write to the style directly.
+            </li>
+            <li>
+              <strong>Make the stats count with a different easing.</strong> Try
+              <code>easeOutCubic</code>, then compare.
+            </li>
+            <li>
+              <strong>Add a "back to top" button</strong> that fades in after
+              the user scrolls 600px (state plus a transition on opacity and
+              visibility).
+            </li>
+            <li>
+              <strong>Rebuild one effect without React.</strong> Make the scroll
+              reveal work in a plain HTML file using only the vanilla code
+              above.
+            </li>
+            <li>
+              <strong>Try a scroll-driven animation</strong> with
+              <code>animation-timeline: view()</code> inside an
+              <code>@supports</code> block, in a browser that supports it.
+            </li>
+          </ol>
 
-    <h3>Videos worth watching</h3>
-    <p>Since you learn well from video, these YouTube channels are good for this material. Search for the topic names in parentheses:</p>
-    <ul>
-      <li><strong>Kevin Powell</strong>: clear, practical CSS. (CSS transitions, CSS grid, container queries, clamp.)</li>
-      <li><strong>Web Dev Simplified</strong>: short, focused explainers. (IntersectionObserver, CSS animations, scroll animations.)</li>
-      <li><strong>Fireship</strong>: very fast overviews when you want the shape of a topic. (CSS animation, Intersection Observer.)</li>
-      <li><strong>Google Chrome for Developers</strong>: new CSS features straight from the people building them. (Scroll-driven animations, container queries.)</li>
-    </ul>
-    <p>For reference while you build, MDN Web Docs (<code>developer.mozilla.org</code>) is the most accurate source. Search the exact property name, for example <em>"MDN transition-timing-function"</em> or <em>"MDN IntersectionObserver"</em>.</p>
+          <h3>Videos worth watching</h3>
+          <p>
+            Since you learn well from video, these YouTube channels are good for
+            this material. Search for the topic names in parentheses:
+          </p>
+          <ul>
+            <li>
+              <strong>Kevin Powell</strong>: clear, practical CSS. (CSS
+              transitions, CSS grid, container queries, clamp.)
+            </li>
+            <li>
+              <strong>Web Dev Simplified</strong>: short, focused explainers.
+              (IntersectionObserver, CSS animations, scroll animations.)
+            </li>
+            <li>
+              <strong>Fireship</strong>: very fast overviews when you want the
+              shape of a topic. (CSS animation, Intersection Observer.)
+            </li>
+            <li>
+              <strong>Google Chrome for Developers</strong>: new CSS features
+              straight from the people building them. (Scroll-driven animations,
+              container queries.)
+            </li>
+          </ul>
+          <p>
+            For reference while you build, MDN Web Docs
+            (<code>developer.mozilla.org</code>) is the most accurate source.
+            Search the exact property name, for example
+            <em>"MDN transition-timing-function"</em> or
+            <em>"MDN IntersectionObserver"</em>.
+          </p>
 
-    <div class="callout"><b class="t">The habit that matters most</b>
-      <p>When you see an animation you like on another site, open DevTools, inspect the element and read its CSS. Find the <code>transition</code>, the <code>transform</code>, the <code>cubic-bezier</code>. You now know what you are looking at. That is the fastest way to keep learning.</p>
+          <div class="callout">
+            <b class="t">The habit that matters most</b>
+            <p>
+              When you see an animation you like on another site, open DevTools,
+              inspect the element and read its CSS. Find the
+              <code>transition</code>, the <code>transform</code>, the
+              <code>cubic-bezier</code>. You now know what you are looking at.
+              That is the fastest way to keep learning.
+            </p>
+          </div>
+        </section>
+
+        <p class="end">
+          Written from the code of your own portfolio. Every demo above runs
+          real CSS and JavaScript with the same techniques it describes.
+        </p>
+      </main>
     </div>
-  </section>
+    <script>
+      (function () {
+        var clamp = function (n, a, b) {
+          return Math.min(b, Math.max(a, n));
+        };
+        var $ = function (s, r) {
+          return (r || document).querySelector(s);
+        };
+        var $$ = function (s, r) {
+          return Array.prototype.slice.call(
+            (r || document).querySelectorAll(s),
+          );
+        };
 
-  <p class="end">Written from the code of your own portfolio. Every demo above runs real CSS and JavaScript with the same techniques it describes.</p>
-</main>
-</div>
-<script>
-(function () {
-  var clamp = function (n, a, b) { return Math.min(b, Math.max(a, n)); };
-  var $ = function (s, r) { return (r || document).querySelector(s); };
-  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
-
-  /* ---------- table of contents ---------- */
-  var chapters = $$('.chapter');
-  var tocHtml = chapters.map(function (c) {
-    var num = $('.num', c).textContent;
-    var title = $('h2', c).textContent;
-    var label = /^Chapter/.test(num) ? num.replace('Chapter ', '') + '. ' + title : title;
-    return '<li><a href="#' + c.id + '" data-id="' + c.id + '">' + label + '</a></li>';
-  }).join('');
-  $('#toc').innerHTML = tocHtml;
-  $('#toc-m').innerHTML = tocHtml;
-  $$('#toc-m a').forEach(function (a) {
-    a.addEventListener('click', function () { $('.toc-m').removeAttribute('open'); });
-  });
-  window.addEventListener('scroll', function () {
-    if (window.scrollY < 160) $$('#toc a').forEach(function (a) { a.classList.remove('on'); });
-  }, { passive: true });
-  if ('IntersectionObserver' in window) {
-    var spy = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) {
-          $$('#toc a').forEach(function (a) { a.classList.toggle('on', a.dataset.id === e.target.id); });
+        /* ---------- table of contents ---------- */
+        var chapters = $$(".chapter");
+        var tocHtml = chapters
+          .map(function (c) {
+            var num = $(".num", c).textContent;
+            var title = $("h2", c).textContent;
+            var label = /^Chapter/.test(num)
+              ? num.replace("Chapter ", "") + ". " + title
+              : title;
+            return (
+              '<li><a href="#' +
+              c.id +
+              '" data-id="' +
+              c.id +
+              '">' +
+              label +
+              "</a></li>"
+            );
+          })
+          .join("");
+        $("#toc").innerHTML = tocHtml;
+        $("#toc-m").innerHTML = tocHtml;
+        $$("#toc-m a").forEach(function (a) {
+          a.addEventListener("click", function () {
+            $(".toc-m").removeAttribute("open");
+          });
+        });
+        window.addEventListener(
+          "scroll",
+          function () {
+            if (window.scrollY < 160)
+              $$("#toc a").forEach(function (a) {
+                a.classList.remove("on");
+              });
+          },
+          { passive: true },
+        );
+        if ("IntersectionObserver" in window) {
+          var spy = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (e) {
+                if (e.isIntersecting) {
+                  $$("#toc a").forEach(function (a) {
+                    a.classList.toggle("on", a.dataset.id === e.target.id);
+                  });
+                }
+              });
+            },
+            { rootMargin: "-20% 0px -70% 0px" },
+          );
+          chapters.forEach(function (c) {
+            spy.observe(c);
+          });
         }
-      });
-    }, { rootMargin: '-20% 0px -70% 0px' });
-    chapters.forEach(function (c) { spy.observe(c); });
-  }
 
-  /* ---------- copy buttons ---------- */
-  $$('.codewrap').forEach(function (w) {
-    var b = document.createElement('button');
-    b.className = 'copy'; b.type = 'button'; b.textContent = 'Copy';
-    b.addEventListener('click', function () {
-      var text = $('pre', w).innerText;
-      var done = function (ok) { b.textContent = ok ? 'Copied' : 'Press Ctrl/Cmd+C'; setTimeout(function () { b.textContent = 'Copy'; }, 1600); };
-      try {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(text).then(function () { done(true); }, function () { fallback(); });
-        } else { fallback(); }
-      } catch (e) { fallback(); }
-      function fallback() {
-        try {
-          var r = document.createRange(); r.selectNodeContents($('pre', w));
-          var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
-          done(document.execCommand('copy'));
-        } catch (e) { done(false); }
-      }
-    });
-    w.appendChild(b);
-  });
+        /* ---------- copy buttons ---------- */
+        $$(".codewrap").forEach(function (w) {
+          var b = document.createElement("button");
+          b.className = "copy";
+          b.type = "button";
+          b.textContent = "Copy";
+          b.addEventListener("click", function () {
+            var text = $("pre", w).innerText;
+            var done = function (ok) {
+              b.textContent = ok ? "Copied" : "Press Ctrl/Cmd+C";
+              setTimeout(function () {
+                b.textContent = "Copy";
+              }, 1600);
+            };
+            try {
+              if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(
+                  function () {
+                    done(true);
+                  },
+                  function () {
+                    fallback();
+                  },
+                );
+              } else {
+                fallback();
+              }
+            } catch (e) {
+              fallback();
+            }
+            function fallback() {
+              try {
+                var r = document.createRange();
+                r.selectNodeContents($("pre", w));
+                var s = window.getSelection();
+                s.removeAllRanges();
+                s.addRange(r);
+                done(document.execCommand("copy"));
+              } catch (e) {
+                done(false);
+              }
+            }
+          });
+          w.appendChild(b);
+        });
 
-  /* ---------- ch3: easing race ---------- */
-  var race = $('#race');
-  $('#raceBtn').addEventListener('click', function () {
-    var track = $('.x-track', race);
-    race.style.setProperty('--dist', (track.clientWidth - 22) + 'px');
-    race.classList.toggle('go');
-  });
+        /* ---------- ch3: easing race ---------- */
+        var race = $("#race");
+        $("#raceBtn").addEventListener("click", function () {
+          var track = $(".x-track", race);
+          race.style.setProperty("--dist", track.clientWidth - 22 + "px");
+          race.classList.toggle("go");
+        });
 
-  /* ---------- ch4: mask reveal ---------- */
-  var mask = $('#mask');
-  var runMask = function () {
-    mask.classList.remove('run');
-    void mask.offsetWidth;
-    mask.classList.add('run');
-  };
-  mask.classList.remove('run');
-  if ('IntersectionObserver' in window) {
-    var mo = new IntersectionObserver(function (es) {
-      if (es[0].isIntersecting) { runMask(); mo.disconnect(); }
-    }, { threshold: 0.6 });
-    mo.observe(mask);
-  } else { runMask(); }
-  $('#maskReplay').addEventListener('click', runMask);
-  $('#maskClip').addEventListener('change', function (e) { mask.classList.toggle('nomask', !e.target.checked); runMask(); });
-  $('#maskOutline').addEventListener('change', function (e) { mask.classList.toggle('outline', e.target.checked); });
+        /* ---------- ch4: mask reveal ---------- */
+        var mask = $("#mask");
+        var runMask = function () {
+          mask.classList.remove("run");
+          void mask.offsetWidth;
+          mask.classList.add("run");
+        };
+        mask.classList.remove("run");
+        if ("IntersectionObserver" in window) {
+          var mo = new IntersectionObserver(
+            function (es) {
+              if (es[0].isIntersecting) {
+                runMask();
+                mo.disconnect();
+              }
+            },
+            { threshold: 0.6 },
+          );
+          mo.observe(mask);
+        } else {
+          runMask();
+        }
+        $("#maskReplay").addEventListener("click", runMask);
+        $("#maskClip").addEventListener("change", function (e) {
+          mask.classList.toggle("nomask", !e.target.checked);
+          runMask();
+        });
+        $("#maskOutline").addEventListener("change", function (e) {
+          mask.classList.toggle("outline", e.target.checked);
+        });
 
-  /* ---------- ch5: scroll reveal ---------- */
-  var box = $('#revealBox');
-  var items = $$('.x-r', box);
-  var rio = null;
-  var watch = function () {
-    if (!('IntersectionObserver' in window)) { items.forEach(function (i) { i.classList.add('in'); }); return; }
-    rio = new IntersectionObserver(function (es) {
-      es.forEach(function (e) {
-        if (e.isIntersecting) { e.target.classList.add('in'); rio.unobserve(e.target); }
-      });
-    }, { root: box, threshold: 0.2 });
-    items.forEach(function (i) { rio.observe(i); });
-  };
-  watch();
-  $('#revealReset').addEventListener('click', function () {
-    if (rio) rio.disconnect();
-    items.forEach(function (i) { i.classList.remove('in'); });
-    box.scrollTo({ top: 0, behavior: 'smooth' });
-    setTimeout(watch, 500);
-  });
+        /* ---------- ch5: scroll reveal ---------- */
+        var box = $("#revealBox");
+        var items = $$(".x-r", box);
+        var rio = null;
+        var watch = function () {
+          if (!("IntersectionObserver" in window)) {
+            items.forEach(function (i) {
+              i.classList.add("in");
+            });
+            return;
+          }
+          rio = new IntersectionObserver(
+            function (es) {
+              es.forEach(function (e) {
+                if (e.isIntersecting) {
+                  e.target.classList.add("in");
+                  rio.unobserve(e.target);
+                }
+              });
+            },
+            { root: box, threshold: 0.2 },
+          );
+          items.forEach(function (i) {
+            rio.observe(i);
+          });
+        };
+        watch();
+        $("#revealReset").addEventListener("click", function () {
+          if (rio) rio.disconnect();
+          items.forEach(function (i) {
+            i.classList.remove("in");
+          });
+          box.scrollTo({ top: 0, behavior: "smooth" });
+          setTimeout(watch, 500);
+        });
 
-  /* ---------- ch6: scroll-linked words ---------- */
-  var wordBox = $('#wordBox');
-  var para = $('#words');
-  var words = para.textContent.trim().split(/\s+/);
-  para.innerHTML = words.map(function (w) { return '<span>' + w + '</span> '; }).join('');
-  var spans = $$('span', para);
-  var prog = $('#prog');
-  var updateWords = function () {
-    var r = para.getBoundingClientRect();
-    var br = wordBox.getBoundingClientRect();
-    var h = wordBox.clientHeight;
-    var top = r.top - br.top;
-    var p = clamp((h * 0.85 - top) / (h * 0.5 + r.height), 0, 1);
-    var n = spans.length;
-    spans.forEach(function (s, i) {
-      s.style.opacity = String(0.2 + 0.8 * clamp(p * (n + 2) - i, 0, 1));
-    });
-    prog.textContent = p.toFixed(2);
-  };
-  var raf = 0;
-  wordBox.addEventListener('scroll', function () {
-    cancelAnimationFrame(raf);
-    raf = requestAnimationFrame(updateWords);
-  }, { passive: true });
-  updateWords();
+        /* ---------- ch6: scroll-linked words ---------- */
+        var wordBox = $("#wordBox");
+        var para = $("#words");
+        var words = para.textContent.trim().split(/\s+/);
+        para.innerHTML = words
+          .map(function (w) {
+            return "<span>" + w + "</span> ";
+          })
+          .join("");
+        var spans = $$("span", para);
+        var prog = $("#prog");
+        var updateWords = function () {
+          var r = para.getBoundingClientRect();
+          var br = wordBox.getBoundingClientRect();
+          var h = wordBox.clientHeight;
+          var top = r.top - br.top;
+          var p = clamp((h * 0.85 - top) / (h * 0.5 + r.height), 0, 1);
+          var n = spans.length;
+          spans.forEach(function (s, i) {
+            s.style.opacity = String(0.2 + 0.8 * clamp(p * (n + 2) - i, 0, 1));
+          });
+          prog.textContent = p.toFixed(2);
+        };
+        var raf = 0;
+        wordBox.addEventListener(
+          "scroll",
+          function () {
+            cancelAnimationFrame(raf);
+            raf = requestAnimationFrame(updateWords);
+          },
+          { passive: true },
+        );
+        updateWords();
 
-  /* ---------- ch7: count up ---------- */
-  var cnt = $('#cnt');
-  var eases = {
-    expo: function (p) { return p === 1 ? 1 : 1 - Math.pow(2, -10 * p); },
-    cubic: function (p) { return 1 - Math.pow(1 - p, 3); },
-    linear: function (p) { return p; }
-  };
-  var cntRaf = 0;
-  var runCount = function () {
-    cancelAnimationFrame(cntRaf);
-    var ease = eases[$('#cntEase').value];
-    var start;
-    var tick = function (now) {
-      start = start == null ? now : start;
-      var p = Math.min((now - start) / 1600, 1);
-      cnt.textContent = Math.round(99 * ease(p));
-      if (p < 1) cntRaf = requestAnimationFrame(tick);
-    };
-    cntRaf = requestAnimationFrame(tick);
-  };
-  $('#cntBtn').addEventListener('click', runCount);
-  $('#cntEase').addEventListener('change', runCount);
-  if ('IntersectionObserver' in window) {
-    var co = new IntersectionObserver(function (es) {
-      if (es[0].isIntersecting) { runCount(); co.disconnect(); }
-    }, { threshold: 0.6 });
-    co.observe($('.x-count'));
-  } else { cnt.textContent = '99'; }
+        /* ---------- ch7: count up ---------- */
+        var cnt = $("#cnt");
+        var eases = {
+          expo: function (p) {
+            return p === 1 ? 1 : 1 - Math.pow(2, -10 * p);
+          },
+          cubic: function (p) {
+            return 1 - Math.pow(1 - p, 3);
+          },
+          linear: function (p) {
+            return p;
+          },
+        };
+        var cntRaf = 0;
+        var runCount = function () {
+          cancelAnimationFrame(cntRaf);
+          var ease = eases[$("#cntEase").value];
+          var start;
+          var tick = function (now) {
+            start = start == null ? now : start;
+            var p = Math.min((now - start) / 1600, 1);
+            cnt.textContent = Math.round(99 * ease(p));
+            if (p < 1) cntRaf = requestAnimationFrame(tick);
+          };
+          cntRaf = requestAnimationFrame(tick);
+        };
+        $("#cntBtn").addEventListener("click", runCount);
+        $("#cntEase").addEventListener("change", runCount);
+        if ("IntersectionObserver" in window) {
+          var co = new IntersectionObserver(
+            function (es) {
+              if (es[0].isIntersecting) {
+                runCount();
+                co.disconnect();
+              }
+            },
+            { threshold: 0.6 },
+          );
+          co.observe($(".x-count"));
+        } else {
+          cnt.textContent = "99";
+        }
 
-  /* ---------- ch9: container query slider ---------- */
-  var cw = $('#cw'), cwo = $('#cwo'), cqw = $('#cqw');
-  cw.addEventListener('input', function () {
-    cqw.style.width = cw.value + 'px';
-    cwo.textContent = cw.value + 'px';
-  });
+        /* ---------- ch9: container query slider ---------- */
+        var cw = $("#cw"),
+          cwo = $("#cwo"),
+          cqw = $("#cqw");
+        cw.addEventListener("input", function () {
+          cqw.style.width = cw.value + "px";
+          cwo.textContent = cw.value + "px";
+        });
 
-  /* ---------- ch10: mobile menu ---------- */
-  var phone = $('#phone'), burger = $('#burger');
-  burger.addEventListener('click', function () {
-    var open = phone.classList.toggle('open');
-    burger.setAttribute('aria-expanded', String(open));
-    burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-  });
-})();
-</script>
-</body>
+        /* ---------- ch10: mobile menu ---------- */
+        var phone = $("#phone"),
+          burger = $("#burger");
+        burger.addEventListener("click", function () {
+          var open = phone.classList.toggle("open");
+          burger.setAttribute("aria-expanded", String(open));
+          burger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+        });
+      })();
+    </script>
+  </body>
 </html>
